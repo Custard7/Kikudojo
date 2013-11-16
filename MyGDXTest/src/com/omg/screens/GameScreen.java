@@ -19,9 +19,12 @@ import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity;
 import com.omg.drawing.JSEntity.JSVector2;
 import com.omg.ssplayer.Enemy;
+import com.omg.ssplayer.Kiku;
 import com.omg.ssplayer.Player;
 import com.omg.sswindler.GameManager;
+import com.omg.ssworld.Platform;
 import com.omg.ssworld.StarryBackground;
+import com.omg.ssworld.WorldManager;
 
 public class GameScreen implements Screen {
 
@@ -42,11 +45,13 @@ public class GameScreen implements Screen {
 	 
 	 
 	 private Stage stage;
-	 
+	 WorldManager world;
 	 StarryBackground stars;
 
-	 Player player;
-	 Enemy enemy;
+	// Player player;
+	 //Enemy enemy;
+	 
+	 Kiku player;
 	 
 	 
 	 JSActor BASENODE;
@@ -68,19 +73,18 @@ public class GameScreen implements Screen {
 		
 		// modify camera here
 		
-		
 
-		camera.position.set(player.getX() + player.getOriginX(), player.getY() + player.getOriginY(), 0.0f);
+		camera.position.set(player.getX() + player.getOriginX() + 200, player.getY() + player.getOriginY() + 75, 0.0f);
 		
 		
 		 Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 	        stage.act(Gdx.graphics.getDeltaTime());
 	        stage.draw();
-	        
+	       
 		
 	        
-		
-
+	     if(player.getY() < 0)
+	    	 player.hitGround();
 		
 		
 		
@@ -118,15 +122,19 @@ public class GameScreen implements Screen {
   		BASENODE = new JSActor();
   		stage.addActor(BASENODE);
   		
-  		player = new Player();
+  		player = new Kiku();
   		BASENODE.addActor(player);
   		
-  		enemy = new Enemy();
-  		BASENODE.addActor(enemy);
+
+  		//enemy = new Enemy();
+  		//BASENODE.addActor(enemy);
   		
   		
   		stars = new StarryBackground();
   		BASENODE.addActor(stars);
+  		
+  		world = new WorldManager(-400,-720/2,1280,720);
+  		BASENODE.addActor(world);
   		
   		//stage.setKeyboardFocus(player);
 	}
