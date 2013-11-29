@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity.JSMovementProperties;
 import com.omg.drawing.JSEntity.JSVector2;
+import com.omg.gdxlucid.Timer;
 import com.omg.screens.GameScreen;
 
 public class Jumpable extends JSActor {
@@ -28,9 +29,14 @@ public class Jumpable extends JSActor {
 	}
 	JumpableState jumpState = JumpableState.onGround;
 	
+	boolean canJump = true;
+	boolean jumpedFromGround = false;
+	
 	public float gravity = 1.0f;
 	
 	Body body;
+	
+	Timer isInAirTimer;
 	
 	public Jumpable()
 	{
@@ -47,6 +53,9 @@ public class Jumpable extends JSActor {
 		movement.setMaxVelocity(-100, 100);
 		movement.setMaxAcceleration(-100, 100);
 		
+		isInAirTimer = new Timer();
+		//isInAirTimer.start();
+		
 		addTag("Jumpable");
 	}
 	
@@ -59,6 +68,13 @@ public class Jumpable extends JSActor {
 	 public void draw (SpriteBatch batch, float parentAlpha) {
 		 super.draw(batch, parentAlpha);
 		
+		 if(isInAirTimer.getTime() > 250 && jumpState == JumpableState.onGround && fellFromPlatform)
+		 {
+			jumpState = JumpableState.inAir;
+			canJump = true;
+			
+		 }
+		 
 
 		 switch(jumpState) {
 			
@@ -79,7 +95,7 @@ public class Jumpable extends JSActor {
         //MOVEMENT UNDO
         movement.update();
         translate(movement.getVelocity().x, movement.getVelocity().y);
-		body.setTransform(this.getX() + this.getOriginX() - 100, this.getY() + this.getOriginY() + 85, 0);
+		body.setTransform(this.getX() + this.getOriginX() - 100, this.getY() + this.getOriginY() + 100, 0);
 	 }
 	
 	
@@ -108,9 +124,15 @@ public class Jumpable extends JSActor {
 		case onGround:
 			accelerateY(strength);
 			jumpState = JumpableState.inAir;
+			jumpedFromGround = true;
 			break;
 		case inAir:
 			//accelerateY(strength);
+			if(canJump && !jumpedFromGround) {
+				movement.stop();
+				accelerateY(strength);
+				canJump = false;
+			}
 			break;
 		default:
 			break;
@@ -123,11 +145,20 @@ public class Jumpable extends JSActor {
 		
 		jumpState = JumpableState.onGround;
 		movement.stop();
+		jumpedFromGround = false;
+		isInAirTimer.reset();
+		fellFromPlatform = false;
 		
 	}
+	
+	boolean fellFromPlatform = false;
+	
 	public void inAir() {
-		jumpState = JumpableState.inAir;
-		
+		//jumpState = JumpableState.inAir;
+		//canJump = true;
+		isInAirTimer.reset();
+		isInAirTimer.start();
+		fellFromPlatform = true;
 	}
 	
 	

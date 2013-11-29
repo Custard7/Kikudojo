@@ -32,7 +32,7 @@ public class Kiku extends Jumpable {
     	
     	if(Gdx.input.isKeyPressed(Keys.SPACE))
     	{
-    		jump(10.0f);
+    		jump(15.0f);
     	}
         
 		

@@ -2,6 +2,7 @@ package com.omg.ssworld;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -22,6 +23,7 @@ public class WorldManager extends JSActor {
 	private int speed = 10;
 	
 	Timer worldTimer;
+	Timer backTimer;
 	
 	World physics_world;
 	
@@ -31,6 +33,9 @@ public class WorldManager extends JSActor {
 		
 		 worldTimer = new Timer();
 		 worldTimer.start();
+		 
+		 backTimer = new Timer();
+		 backTimer.start();
 	}
 	
 	public void setDimensions(int x, int y, int width, int height){
@@ -51,18 +56,23 @@ public class WorldManager extends JSActor {
 		
 		
 		for(Actor a : this.getChildren()) {
-			a.translate(-speed, 0);
+			
+			int customSpeed = 0;
+			
+			if(((JSActor)a).hasTag("Background"))
+				customSpeed = ((Background)a).getCustomSpeed();
+			a.translate(-(speed + customSpeed), 0);
 		}
     	
     	
 		updatePlatformCreation();
-        
+        updateBackgroundCreation();
 		
 	}
 	
 	
 	public void updatePlatformCreation() {
-		if(worldTimer.getTime()  > 160){
+		if(worldTimer.getTime()  > 255){
 			Platform p = new Platform();
 			p.addPhysics(physics_world);
 			addPlatform(p);
@@ -72,15 +82,48 @@ public class WorldManager extends JSActor {
 		
 	}
 	
-	private float last_y;
+	public void updateBackgroundCreation() {
+		if(backTimer.getTime()  > 700){
+			StarryBackground b = new StarryBackground();
+			addBackground(b);
+			backTimer.reset();
+		}
+	}
+	
+	private float last_y = 0;
 	
 	public void addPlatform(Platform p) {
+		
+		
+		int ranNum = (int)(Math.random() * 100);
+				
 		p.setWorldBounds(x, y, width, height);
 		p.setX(x + width);
-		p.setY((float)(Math.random() * (height/2)));
+		
+		float ran_y = (float)(Math.random() * (height/2));
+		
+		if(ranNum > 60) {
+			p.setY(ran_y);
+			last_y = ran_y;
+		}
+		else if (ranNum < 70){
+			p.setY(last_y);
+		}
+
+		if(!(ranNum >= 70))
 		addActor(p);
 		
-		last_y = y;
+	}
+	
+	public void addBackground(StarryBackground b) {
+		
+		b.setWorldBounds(x, y, width, height);
+
+		b.setX(x + width);
+		b.setY((float) (-Math.random() * (height/2)));
+		
+		addActor(b);
+		
 	}
 	
 	

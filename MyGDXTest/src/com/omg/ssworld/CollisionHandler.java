@@ -17,7 +17,7 @@ public class CollisionHandler implements ContactListener {
 	@Override
 	public void beginContact(Contact contact) {
 		// TODO Auto-generated method stub
-	    Gdx.app.log(TAG, "Begin Contact! :D");
+	    //Gdx.app.log(TAG, "Begin Contact! :D");
 
 	
 		Body a=contact.getFixtureA().getBody();
@@ -25,13 +25,13 @@ public class CollisionHandler implements ContactListener {
 	    JSActor j = (JSActor)a.getUserData();
 	    JSActor s = (JSActor)b.getUserData();
 	    
-	    Gdx.app.log(TAG, "Collision: J:" + j.getTags().get(0) + " S: " + s.getTags().get(0));
+	    //Gdx.app.log(TAG, "Collision: J:" + j.getTags().get(0) + " S: " + s.getTags().get(0));
 
 
 	    if(j.hasTag("Platform") && s.hasTag("Jumpable"))
 	    {
 	    	((Jumpable)s).hitGround();
-		    Gdx.app.log(TAG, "Collision b/w Jumpable and Platform");
+		    //Gdx.app.log(TAG, "Collision b/w Jumpable and Platform");
 	    	
 	    }
 	    
@@ -42,7 +42,7 @@ public class CollisionHandler implements ContactListener {
 	@Override
 	public void endContact(Contact contact) {
 		// TODO Auto-generated method stub
-	    Gdx.app.log(TAG, "End Contact! :(");
+	   // Gdx.app.log(TAG, "End Contact! :(");
 
 		
 		Body a=contact.getFixtureA().getBody();
@@ -50,13 +50,13 @@ public class CollisionHandler implements ContactListener {
 	    JSActor j = (JSActor)a.getUserData();
 	    JSActor s = (JSActor)b.getUserData();
 	    
-	    Gdx.app.log(TAG, "Collision Ended: J:" + j.getTags().get(0) + " S: " + s.getTags().get(0));
+	   // Gdx.app.log(TAG, "Collision Ended: J:" + j.getTags().get(0) + " S: " + s.getTags().get(0));
 
 
 	    if(j.hasTag("Platform") && s.hasTag("Jumpable"))
 	    {
 	    	((Jumpable)s).inAir();
-		    Gdx.app.log(TAG, "Collision b/w Jumpable and Platform");
+		    //Gdx.app.log(TAG, "Collision b/w Jumpable and Platform");
 	    	
 	    }
 	}

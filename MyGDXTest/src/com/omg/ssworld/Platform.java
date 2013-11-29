@@ -92,14 +92,14 @@ private void createBody(World physics_world) {
 		// We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 		bodyDef.type = BodyType.KinematicBody;
 		// Set our body's starting position in the world
-		bodyDef.position.set(x, y);
+		bodyDef.position.set(-5000, -5000);
 
 		// Create our body in the world using our body definition
 		body = physics_world.createBody(bodyDef);
 
 		// Create a circle shape and set its radius to 6
 		PolygonShape rectangle = new PolygonShape();
-		rectangle.setAsBox(c_width/2, c_height/10);
+		rectangle.setAsBox(c_width/2.3f, c_height/8);
 
 		// Create a fixture definition to apply our shape to
 		FixtureDef fixtureDef = new FixtureDef();

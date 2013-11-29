@@ -25,6 +25,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity;
 import com.omg.drawing.JSEntity.JSVector2;
+import com.omg.sfx.MusicManager;
+import com.omg.sfx.MusicManager.LucidMusic;
+import com.omg.sfx.SoundManager;
+import com.omg.sfx.SoundManager.LucidSound;
 import com.omg.ssplayer.Enemy;
 import com.omg.ssplayer.Kiku;
 import com.omg.ssplayer.Player;
@@ -51,10 +55,13 @@ public class GameScreen implements Screen {
 	private Rectangle viewport;
 	*/
 	 
+	 MusicManager musicManager;
+	 SoundManager soundManager;
+	 
 	 
 	 private Stage stage;
 	 WorldManager world;
-	 StarryBackground stars;
+	 //StarryBackground stars;
 	 World physics_world;
 	 
 	 public static final float WORLD_TO_BOX = 0.01f;
@@ -103,10 +110,20 @@ public class GameScreen implements Screen {
 	       
 		
 	        
-	     if(player.getY() < 0)
+	     if(player.getY() < -250)
 	    	 player.hitGround();
 		
-			debugRenderer.render(physics_world, camera.combined);
+		
+	   if(Gdx.input.isKeyPressed(Keys.P)) {
+		   debugRenderer.setDrawBodies(false);
+		   //soundManager.play(LucidSound.JUMP);
+	   }
+	   else if(Gdx.input.isKeyPressed(Keys.O)){
+		   debugRenderer.setDrawBodies(true);
+	   }
+
+	     
+	     debugRenderer.render(physics_world, camera.combined);
 
 		
 	}
@@ -178,14 +195,26 @@ public class GameScreen implements Screen {
   		//BASENODE.addActor(enemy);
   		
   		
-  		stars = new StarryBackground();
-  		BASENODE.addActor(stars);
+  		//stars = new StarryBackground();
+  		//BASENODE.addActor(stars);
   		
-  		world = new WorldManager(-400,-720/2,1280,720);
+  		world = new WorldManager(-1500,-720/2,1280 * 3,720 * 2);
   		world.addPhysics(physics_world);
   		BASENODE.addActor(world);
   		
 
+  		 // create the music manager service
+        musicManager = new MusicManager();
+      //  musicManager.setVolume( preferencesManager.getVolume() );
+        musicManager.setEnabled( true);
+        
+        //musicManager.play(LucidMusic.SWINDLER);
+
+        // create the sound manager service
+        soundManager = new SoundManager();
+       // soundManager.setVolume( preferencesManager.getVolume() );
+        soundManager.setEnabled( true);
+        
   		
   		//stage.setKeyboardFocus(player);
 	}
