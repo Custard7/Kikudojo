@@ -1,5 +1,9 @@
 package com.omg.drawing;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,7 +29,10 @@ public class JSActor extends Group {
 	
 	TextureRegion region;
 
-	
+	/**
+	 * A list of tags attached to this entity.
+	 */
+	public List<String> 	tags = new ArrayList<String>();
 	
 	public JSActor() {
 		super();
@@ -34,6 +41,7 @@ public class JSActor extends Group {
 		TextureRegion r = new TextureRegion(t,0,0,t.getWidth(),t.getHeight());
 		
 		setRegion(r);*/
+
 	}
 	
 	
@@ -96,4 +104,56 @@ public class JSActor extends Group {
 	public ChildrenDrawDirection getChildDrawDirection() {
 		return cDirection;
 	}
+	
+	
+	
+	/**
+	 * Adds a tag to this AREntity.
+	 * @param tag to add.
+	 */
+	public void addTag(String tag) {
+		
+		tags.add(tag);
+		
+	}
+	
+	/**
+	 * Returns whether this entity has a given tag.
+	 * @param tag to check.
+	 * @return True if it does have the tag, False if not.
+	 */
+	public boolean hasTag(String tag) {
+		for (String t : tags) {
+			if(tag.equals(t))
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Removes a given tag from this AREntity.
+	 * @param tag to remove.
+	 */
+	public void removeTag(String tag) {
+		Iterator<String> it = tags.iterator();
+		
+		while(it.hasNext()) {
+			String t = it.next();
+			if(t.equals(tag)) {
+				it.remove();
+				//TODO: FINISH REMOVE TAG FUNCTION
+			}	
+		}
+
+	}
+	
+	/**
+	 * Gets all tags associated with this AREntity.
+	 * @return all tags associated with this AREntity.
+	 */
+	public List<String> getTags() {
+		return tags;
+	}
+	
+	
 }

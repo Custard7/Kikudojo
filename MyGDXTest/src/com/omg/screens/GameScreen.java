@@ -1,5 +1,7 @@
 package com.omg.screens;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
@@ -11,7 +13,12 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -22,6 +29,7 @@ import com.omg.ssplayer.Enemy;
 import com.omg.ssplayer.Kiku;
 import com.omg.ssplayer.Player;
 import com.omg.sswindler.GameManager;
+import com.omg.ssworld.CollisionHandler;
 import com.omg.ssworld.Platform;
 import com.omg.ssworld.StarryBackground;
 import com.omg.ssworld.WorldManager;
@@ -47,6 +55,12 @@ public class GameScreen implements Screen {
 	 private Stage stage;
 	 WorldManager world;
 	 StarryBackground stars;
+	 World physics_world;
+	 
+	 public static final float WORLD_TO_BOX = 0.01f;
+	 public static final float BOX_TO_WORLD = 100f;
+	 Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+	 CollisionHandler collisionHandler;
 
 	// Player player;
 	 //Enemy enemy;
@@ -69,12 +83,18 @@ public class GameScreen implements Screen {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		
-		Camera camera = stage.getCamera();
+		OrthographicCamera camera = (OrthographicCamera)stage.getCamera();
 		
 		// modify camera here
+		physics_world.step(1/60f, 6, 2);
+		
+		
+		updatePhysics();
 		
 
-		camera.position.set(player.getX() + player.getOriginX() + 200, player.getY() + player.getOriginY() + 75, 0.0f);
+		camera.position.set(player.getX() + player.getOriginX() + 200, player.getY() + player.getOriginY() + 75, 10000.0f);
+		camera.far = 10000.0f;
+		camera.zoom = 2;
 		
 		
 		 Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -86,9 +106,30 @@ public class GameScreen implements Screen {
 	     if(player.getY() < 0)
 	    	 player.hitGround();
 		
-		
+			debugRenderer.render(physics_world, camera.combined);
+
 		
 	}
+	
+	public void updatePhysics() {
+		/*Iterator<Body> bi = physics_world.getBodies();
+        
+		while (bi.hasNext()){
+		    Body b = bi.next();
+
+		    // Get the bodies user data - in this example, our user 
+		    // data is an instance of the Entity class
+		    JSActor e = (JSActor) b.getUserData();
+
+		    if (e != null) {
+		        // Update the entities/sprites position and angle
+		        e.setPosition(b.getPosition().x, b.getPosition().y);
+		        // We need to convert our angle from radians to degrees
+		        e.setRotation(MathUtils.radiansToDegrees * b.getAngle());
+		    }
+		}*/
+	}
+	
 
 	@Override
 	public void resize(int width, int height) {
@@ -103,10 +144,13 @@ public class GameScreen implements Screen {
 		
   		float w = Gdx.graphics.getWidth();
   		float h = Gdx.graphics.getHeight();
-  		
+
+
+  	    Camera camera = new OrthographicCamera(1, h/w);
   		
   		stage = new Stage(w,h,true);
         Gdx.input.setInputProcessor(stage);
+        stage.setCamera(camera);
         
   		/*
   		camera = new OrthographicCamera(w, h);
@@ -117,12 +161,16 @@ public class GameScreen implements Screen {
 */
         
         
-        
+  		physics_world = new World(new Vector2(0,0), true);
+  		collisionHandler = new CollisionHandler();
+  		physics_world.setContactListener(collisionHandler);
+  		
   		
   		BASENODE = new JSActor();
   		stage.addActor(BASENODE);
   		
   		player = new Kiku();
+  		player.addPhysics(physics_world);
   		BASENODE.addActor(player);
   		
 
@@ -134,7 +182,10 @@ public class GameScreen implements Screen {
   		BASENODE.addActor(stars);
   		
   		world = new WorldManager(-400,-720/2,1280,720);
+  		world.addPhysics(physics_world);
   		BASENODE.addActor(world);
+  		
+
   		
   		//stage.setKeyboardFocus(player);
 	}
