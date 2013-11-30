@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.testflightapp.lib.TestFlight;
 
 public class Kiku extends Jumpable {
 
@@ -30,9 +31,9 @@ public class Kiku extends Jumpable {
 		setZIndex(10000);
 
     	
-    	if(Gdx.input.isKeyPressed(Keys.SPACE))
+    	if(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched())
     	{
-    		jump(15.0f);
+    		jump(1500.0f);
     	}
         
 		

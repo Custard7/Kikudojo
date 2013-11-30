@@ -32,7 +32,7 @@ public class Jumpable extends JSActor {
 	boolean canJump = true;
 	boolean jumpedFromGround = false;
 	
-	public float gravity = 1.0f;
+	public float gravity = 50.0f;
 	
 	Body body;
 	
@@ -68,7 +68,7 @@ public class Jumpable extends JSActor {
 	 public void draw (SpriteBatch batch, float parentAlpha) {
 		 super.draw(batch, parentAlpha);
 		
-		 if(isInAirTimer.getTime() > 250 && jumpState == JumpableState.onGround && fellFromPlatform)
+		 if(isInAirTimer.getTime() > 14000 * Gdx.graphics.getDeltaTime() && jumpState == JumpableState.onGround && fellFromPlatform)
 		 {
 			jumpState = JumpableState.inAir;
 			canJump = true;
@@ -81,9 +81,9 @@ public class Jumpable extends JSActor {
 			case onGround:
 				break;
 			case inAir:
-				accelerateY(-gravity/10);
-				if(!Gdx.input.isKeyPressed(Keys.SPACE))
-					accelerateY(-gravity/3);
+				accelerateY(-gravity/8);
+				if(!(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched()))
+					accelerateY(-gravity * 2);
 
 				break;
 			default:
@@ -102,11 +102,11 @@ public class Jumpable extends JSActor {
 	
 	
 	public void accelerateX(float xAmount) {
-		movement.accelerate(new JSVector2(xAmount, 0));
+		movement.accelerate(new JSVector2(xAmount * Gdx.graphics.getDeltaTime(), 0));
 	}
 	
 	public void accelerateY(float yAmount) {
-		movement.accelerate(new JSVector2(0, yAmount));
+		movement.accelerate(new JSVector2(0, yAmount * Gdx.graphics.getDeltaTime()));
 	}
 	
 	public void accelerate(float xAmount, float yAmount) {

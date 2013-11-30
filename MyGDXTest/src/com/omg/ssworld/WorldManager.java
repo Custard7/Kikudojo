@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity;
 import com.omg.gdxlucid.Timer;
+import com.testflightapp.lib.TestFlight;
 
 public class WorldManager extends JSActor {
 
@@ -25,6 +26,8 @@ public class WorldManager extends JSActor {
 	Timer worldTimer;
 	Timer backTimer;
 	
+	Timer totalPlayTime;
+	
 	World physics_world;
 	
 	
@@ -36,7 +39,11 @@ public class WorldManager extends JSActor {
 		 
 		 backTimer = new Timer();
 		 backTimer.start();
+		 
+		 totalPlayTime = new Timer();
+		 totalPlayTime.start();
 	}
+	
 	
 	public void setDimensions(int x, int y, int width, int height){
 		this.x = x;
@@ -66,13 +73,20 @@ public class WorldManager extends JSActor {
     	
     	
 		updatePlatformCreation();
-        updateBackgroundCreation();
+        //updateBackgroundCreation();
+		
+		
+		if(totalPlayTime.getTime() > 60000)
+		{
+    		TestFlight.passCheckpoint("Played for a minute!");
+    		totalPlayTime.reset();
+		}
 		
 	}
 	
 	
 	public void updatePlatformCreation() {
-		if(worldTimer.getTime()  > 255){
+		if(worldTimer.getTime()  > 15000 * Gdx.graphics.getDeltaTime()){
 			Platform p = new Platform();
 			p.addPhysics(physics_world);
 			addPlatform(p);
@@ -83,7 +97,7 @@ public class WorldManager extends JSActor {
 	}
 	
 	public void updateBackgroundCreation() {
-		if(backTimer.getTime()  > 700){
+		if(backTimer.getTime()  > 140000 * Gdx.graphics.getDeltaTime()){
 			StarryBackground b = new StarryBackground();
 			addBackground(b);
 			backTimer.reset();

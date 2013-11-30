@@ -37,6 +37,7 @@ import com.omg.ssworld.CollisionHandler;
 import com.omg.ssworld.Platform;
 import com.omg.ssworld.StarryBackground;
 import com.omg.ssworld.WorldManager;
+import com.testflightapp.lib.TestFlight;
 
 public class GameScreen implements Screen {
 
@@ -117,6 +118,7 @@ public class GameScreen implements Screen {
 	   if(Gdx.input.isKeyPressed(Keys.P)) {
 		   debugRenderer.setDrawBodies(false);
 		   //soundManager.play(LucidSound.JUMP);
+		   TestFlight.log("Turned off debug renderer..");
 	   }
 	   else if(Gdx.input.isKeyPressed(Keys.O)){
 		   debugRenderer.setDrawBodies(true);
