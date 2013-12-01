@@ -1,9 +1,11 @@
 package com.omg.screens;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL10;
@@ -25,10 +27,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity;
 import com.omg.drawing.JSEntity.JSVector2;
+import com.omg.drawing.JSSpriter;
 import com.omg.sfx.MusicManager;
 import com.omg.sfx.MusicManager.LucidMusic;
 import com.omg.sfx.SoundManager;
 import com.omg.sfx.SoundManager.LucidSound;
+import com.omg.spriter.TextureProvider;
 import com.omg.ssplayer.Enemy;
 import com.omg.ssplayer.Kiku;
 import com.omg.ssplayer.Player;
@@ -39,22 +43,11 @@ import com.omg.ssworld.StarryBackground;
 import com.omg.ssworld.WorldManager;
 import com.testflightapp.lib.TestFlight;
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, TextureProvider {
 
 	 GameManager gameManager;
 	 
 	 
-	/*private OrthographicCamera camera;
-	private SpriteBatch batch;
-	
-	
-	private static final int VIRTUAL_WIDTH = 480;
-    private static final int VIRTUAL_HEIGHT = 320;
-    private static final float ASPECT_RATIO =
-        (float)VIRTUAL_WIDTH/(float)VIRTUAL_HEIGHT;
-
-	private Rectangle viewport;
-	*/
 	 
 	 MusicManager musicManager;
 	 SoundManager soundManager;
@@ -62,7 +55,6 @@ public class GameScreen implements Screen {
 	 
 	 private Stage stage;
 	 WorldManager world;
-	 //StarryBackground stars;
 	 World physics_world;
 	 
 	 public static final float WORLD_TO_BOX = 0.01f;
@@ -70,11 +62,12 @@ public class GameScreen implements Screen {
 	 Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 	 CollisionHandler collisionHandler;
 
-	// Player player;
-	 //Enemy enemy;
+	 HashMap<String, Texture> textures;
+
 	 
 	 Kiku player;
 	 
+	 JSSpriter knight;
 	 
 	 JSActor BASENODE;
 
@@ -118,7 +111,8 @@ public class GameScreen implements Screen {
 	   if(Gdx.input.isKeyPressed(Keys.P)) {
 		   debugRenderer.setDrawBodies(false);
 		   //soundManager.play(LucidSound.JUMP);
-		   TestFlight.log("Turned off debug renderer..");
+		   if(Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS)
+			   TestFlight.log("Turned off debug renderer..");
 	   }
 	   else if(Gdx.input.isKeyPressed(Keys.O)){
 		   debugRenderer.setDrawBodies(true);
@@ -157,10 +151,6 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-		
-		
-		
-		
   		float w = Gdx.graphics.getWidth();
   		float h = Gdx.graphics.getHeight();
 
@@ -171,13 +161,11 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         stage.setCamera(camera);
         
-  		/*
-  		camera = new OrthographicCamera(w, h);
-  		camera.viewportHeight = 1280;  
-  		camera.viewportWidth = 1280;
-  		camera.position.set(camera.viewportWidth * .5f, camera.viewportHeight * .5f, 0f);  
-  		camera.update();
-*/
+        
+        textures = new HashMap<String, Texture>();
+
+        
+
         
         
   		physics_world = new World(new Vector2(0,0), true);
@@ -192,13 +180,9 @@ public class GameScreen implements Screen {
   		player.addPhysics(physics_world);
   		BASENODE.addActor(player);
   		
+  		//knight = new JSSpriter("data/hero/BetaFormatHero.SCML",this);
+  		//BASENODE.addActor(knight);
 
-  		//enemy = new Enemy();
-  		//BASENODE.addActor(enemy);
-  		
-  		
-  		//stars = new StarryBackground();
-  		//BASENODE.addActor(stars);
   		
   		world = new WorldManager(-1500,-720/2,1280 * 3,720 * 2);
   		world.addPhysics(physics_world);
@@ -242,5 +226,22 @@ public class GameScreen implements Screen {
         stage.dispose();
 
 	}
+	
+	@Override
+	  public Texture getTexture(String filename) {
+	    if (!textures.containsKey(filename)) {
+	      textures.put(filename, new Texture(Gdx.files.internal(filename)));
+	      System.out.println("Texture " + filename + " loaded");
+	    }
+	    return textures.get(filename);
+
+	  }
+
+	  @Override
+	  public void disposeTexture(String filename) {
+	    textures.get(filename).dispose();
+	    textures.remove(filename);
+	    System.out.println("Texture " + filename + " disposed");
+	  }
 
 }

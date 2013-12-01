@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b5">
+    <folder id="0" name="p1_head_0">
+        <file id="0" name="p1_head_0/head_1.png" width="96" height="99" pivot_x="0" pivot_y="1"/>
+        <file id="1" name="p1_head_0/head_HIT.png" width="77" height="99" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <folder id="1" name="p1_chest_0">
+        <file id="0" name="p1_chest_0/chest_1.png" width="60" height="60" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <folder id="2" name="p1_pants_0">
+        <file id="0" name="p1_pants_0/pelvis_1.png" width="40" height="34" pivot_x="0" pivot_y="1"/>
+        <file id="1" name="p1_pants_0/leg_b.png" width="38" height="48" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <folder id="3" name="p1_sheild_0">
+        <file id="0" name="p1_sheild_0/shield_a.png" width="80" height="120" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <folder id="4" name="p1_sword_0">
+        <file id="0" name="p1_sword_0/sword_0.png" width="187" height="88" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <entity id="0" name="dude">
+        <animation id="0" name="slash" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" name="head_1" folder="0" file="0" abs_x="-52" abs_y="143" abs_pivot_x="0" abs_pivot_y="1" abs_angle="360" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" name="chest_1" folder="1" file="0" abs_x="-30" abs_y="72" abs_pivot_x="0" abs_pivot_y="1" abs_angle="360" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="1" key="0" z_index="1"/>
+                    <object_ref id="2" name="shield_a" folder="3" file="0" abs_x="-11" abs_y="80" abs_pivot_x="0" abs_pivot_y="1" abs_angle="360" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="2" key="0" z_index="2"/>
+                    <object_ref id="3" name="sword_0" folder="4" file="0" abs_x="-75" abs_y="49" abs_pivot_x="0" abs_pivot_y="1" abs_angle="360" abs_scale_x="1" abs_scale_y="1" abs_a="1" timeline="3" key="0" z_index="3"/>
+                </key>
+                <key id="1" time="47">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="1" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="1" z_index="2"/>
+                    <object_ref id="3" timeline="3" key="1" z_index="3"/>
+                </key>
+                <key id="2" time="120">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="1" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="1" z_index="2"/>
+                    <object_ref id="3" timeline="3" key="2" z_index="3"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="head_1">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" x="-52" y="143"/>
+                </key>
+                <key id="1" time="47" spin="0">
+                    <object folder="0" file="0" x="-52" y="143"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="chest_1">
+                <key id="0" spin="0">
+                    <object folder="1" file="0" x="-30" y="72"/>
+                </key>
+                <key id="1" time="47" spin="0">
+                    <object folder="1" file="0" x="-30" y="72"/>
+                </key>
+            </timeline>
+            <timeline id="2" name="shield_a">
+                <key id="0" spin="0">
+                    <object folder="3" file="0" x="-11" y="80"/>
+                </key>
+                <key id="1" time="47" spin="0">
+                    <object folder="3" file="0" x="-11" y="80"/>
+                </key>
+            </timeline>
+            <timeline id="3" name="sword_0">
+                <key id="0" spin="0">
+                    <object folder="4" file="0" x="-75" y="49"/>
+                </key>
+                <key id="1" time="47">
+                    <object folder="4" file="0" x="-75" y="49"/>
+                </key>
+                <key id="2" time="120" spin="-1">
+                    <object folder="4" file="0" x="-29" y="-12" angle="104.293558" scale_y="1"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

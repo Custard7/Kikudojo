@@ -19,8 +19,13 @@ public class GameManager extends Game {
 		
 		menuScreen = new MainMenuScreen(this);
 		gameScreen = new GameScreen(this);
-		setScreen(gameScreen);
+		setScreen(menuScreen);
 		
+	}
+	
+	
+	public void gotoGameScreen(){
+		setScreen(gameScreen);
 	}
 
 }

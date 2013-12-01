@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.physics.box2d.World;
@@ -78,7 +79,8 @@ public class WorldManager extends JSActor {
 		
 		if(totalPlayTime.getTime() > 60000)
 		{
-    		TestFlight.passCheckpoint("Played for a minute!");
+			if(Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS)
+				TestFlight.passCheckpoint("Played for a minute!");
     		totalPlayTime.reset();
 		}
 		
@@ -97,7 +99,7 @@ public class WorldManager extends JSActor {
 	}
 	
 	public void updateBackgroundCreation() {
-		if(backTimer.getTime()  > 140000 * Gdx.graphics.getDeltaTime()){
+		if(backTimer.getTime()  > 70000 * Gdx.graphics.getDeltaTime()){
 			StarryBackground b = new StarryBackground();
 			addBackground(b);
 			backTimer.reset();
