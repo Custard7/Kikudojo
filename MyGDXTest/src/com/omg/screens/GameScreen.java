@@ -93,7 +93,8 @@ public class GameScreen implements Screen, TextureProvider {
 		updatePhysics();
 		
 
-		camera.position.set(player.getX() + player.getOriginX() + 200, player.getY() + player.getOriginY() + 75, 10000.0f);
+		//camera.position.set(player.getX() + player.getOriginX() + 200, player.getY() + player.getOriginY() + 75, 10000.0f);
+		camera.position.set(200, 500, 10000.0f);
 		camera.far = 10000.0f;
 		camera.zoom = 2;
 		
@@ -182,6 +183,7 @@ public class GameScreen implements Screen, TextureProvider {
   		
   		//knight = new JSSpriter("data/hero/BetaFormatHero.SCML",this);
   		//BASENODE.addActor(knight);
+
 
   		
   		world = new WorldManager(-1500,-720/2,1280 * 3,720 * 2);

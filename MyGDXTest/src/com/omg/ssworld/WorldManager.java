@@ -22,7 +22,7 @@ public class WorldManager extends JSActor {
 	private int width;
 	private int height;
 	
-	private int speed = 10;
+	public float speed = 25;
 	
 	Timer worldTimer;
 	Timer backTimer;
@@ -30,6 +30,7 @@ public class WorldManager extends JSActor {
 	Timer totalPlayTime;
 	
 	World physics_world;
+	
 	
 	
 	public WorldManager(int x, int y, int width, int height) {
@@ -43,6 +44,7 @@ public class WorldManager extends JSActor {
 		 
 		 totalPlayTime = new Timer();
 		 totalPlayTime.start();
+		 
 	}
 	
 	
@@ -65,16 +67,19 @@ public class WorldManager extends JSActor {
 		
 		for(Actor a : this.getChildren()) {
 			
-			int customSpeed = 0;
+			if(!((JSActor)a).hasTag("STATIC")) {
 			
-			if(((JSActor)a).hasTag("Background"))
-				customSpeed = ((Background)a).getCustomSpeed();
-			a.translate(-(speed + customSpeed), 0);
+				int customSpeed = 0;
+				
+				if(((JSActor)a).hasTag("Background"))
+					customSpeed = ((Background)a).getCustomSpeed();
+				a.translate(-(speed + customSpeed), 0);
+			}
 		}
     	
     	
 		updatePlatformCreation();
-        //updateBackgroundCreation();
+        updateBackgroundCreation();
 		
 		
 		if(totalPlayTime.getTime() > 60000)
@@ -88,20 +93,42 @@ public class WorldManager extends JSActor {
 	
 	
 	public void updatePlatformCreation() {
-		if(worldTimer.getTime()  > 15000 * Gdx.graphics.getDeltaTime()){
+		/*if(worldTimer.getTime()  > 15000 * Gdx.graphics.getDeltaTime()){
 			Platform p = new Platform();
 			p.addPhysics(physics_world);
 			addPlatform(p);
 			worldTimer.reset();
-		}
+		}*/
 		
+		if(worldTimer.getTime()  > 120000 * Gdx.graphics.getDeltaTime()){
+			PlatformSpawn p = new PlatformSpawn(this, (int) ((Math.random() * 8) + 4));
+			addPlatformSpawn(p);
+			worldTimer.reset();
+		}
 		
 	}
 	
 	public void updateBackgroundCreation() {
-		if(backTimer.getTime()  > 70000 * Gdx.graphics.getDeltaTime()){
-			StarryBackground b = new StarryBackground();
-			addBackground(b);
+		if(backTimer.getTime()  > (70000 / (speed/10.0f))  * Gdx.graphics.getDeltaTime()){
+			
+			boolean canReuse = false;
+			Background b = null;
+			
+			for(Actor a : this.getChildren()) {
+				
+				if(((JSActor)a).hasTag("Background")) {
+			
+					if(!((Background)a).isActive) {
+						((Background)a).isActive = true;
+						b = ((Background)a);
+						canReuse = true;
+					}
+				}
+			}
+			
+			if(!canReuse)
+				b = new StarryBackground();
+			addBackground(b, canReuse);
 			backTimer.reset();
 		}
 	}
@@ -131,14 +158,37 @@ public class WorldManager extends JSActor {
 		
 	}
 	
-	public void addBackground(StarryBackground b) {
+	
+	public void addPlatform(Platform p, float yPos) {
+		
+		p.setWorldBounds(x, y, width, height);
+		p.setX(x + width);
+		p.addPhysics(physics_world);
+		p.setY(yPos);
+		addActor(p);
+		
+	}
+	
+	public void addPlatformSpawn(PlatformSpawn p) {
+		float ran_y = (float)(Math.random() * (height/2));
+
+		p.setY(ran_y);
+		p.setX(x + width);
+		
+		addActor(p);
+		
+		
+	}
+	
+	public void addBackground(Background b, boolean reuse) {
 		
 		b.setWorldBounds(x, y, width, height);
 
 		b.setX(x + width);
 		b.setY((float) (-Math.random() * (height/2)));
 		
-		addActor(b);
+		if(!reuse)
+			addActor(b);
 		
 	}
 	

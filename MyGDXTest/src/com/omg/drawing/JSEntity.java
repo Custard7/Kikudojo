@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -511,7 +512,7 @@ public class JSEntity extends Sprite {
 	 * @param gl is the OpenGL context
 	 * @param context is th application context
 	 */
-	protected void drawChildren(SpriteBatch batch) {
+	protected void drawChildren(Batch batch) {
 		
 		List<JSEntity> toKill = new ArrayList<JSEntity>();
 		for(JSEntity child : children){
@@ -551,7 +552,7 @@ public class JSEntity extends Sprite {
 	 * @param context is the application context.
 	 */
 	@Override
-	public void draw(SpriteBatch batch) {
+	public void draw(Batch batch) {
 		
 		switch(getDrawDirection()) {
 		

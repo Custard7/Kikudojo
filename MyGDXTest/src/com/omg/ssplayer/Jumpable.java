@@ -3,6 +3,7 @@ package com.omg.ssplayer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -32,7 +33,7 @@ public class Jumpable extends JSActor {
 	boolean canJump = true;
 	boolean jumpedFromGround = false;
 	
-	public float gravity = 50.0f;
+	public float gravity = 100.0f;
 	
 	Body body;
 	
@@ -65,7 +66,7 @@ public class Jumpable extends JSActor {
 	
 	
 	@Override
-	 public void draw (SpriteBatch batch, float parentAlpha) {
+	 public void draw (Batch batch, float parentAlpha) {
 		 super.draw(batch, parentAlpha);
 		
 		 if(isInAirTimer.getTime() > 14000 * Gdx.graphics.getDeltaTime() && jumpState == JumpableState.onGround && fellFromPlatform)

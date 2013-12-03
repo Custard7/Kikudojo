@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.omg.drawing.JSActor.ChildrenDrawDirection;
@@ -46,7 +47,7 @@ public class JSSpriter extends Group {
 	 int frame = 0;
 	
 	@Override
-	 public void draw (SpriteBatch batch, float parentAlpha) {
+	 public void draw (Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
 
 		   SpriterDrawer.draw(batch, spriterObject, "walk", frame,

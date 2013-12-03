@@ -4,6 +4,7 @@ import java.util.List;
 
 
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.omg.spriter.SpriterAnimation;
 import com.omg.spriter.SpriterAnimationFrame;
@@ -12,7 +13,7 @@ import com.omg.spriter.SpriterSprite;
 
 public class SpriterDrawer {
 
-  public static void draw(SpriteBatch spriteBatch, SpriterObject spriterObject,
+  public static void draw(Batch spriteBatch, SpriterObject spriterObject,
       String animationName, float keyTime, float offsetX, float offsetY, boolean repeatAnimation,
       boolean doTweening) {
     SpriterAnimation spriterAnimation = spriterObject.getAnimations().get(animationName);

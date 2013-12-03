@@ -1,6 +1,7 @@
 package com.omg.drawing;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -32,7 +33,7 @@ public class JSFont extends Group {
 
 
 	    @Override
-	    public void draw(SpriteBatch batch, float parentAlpha) {
+	    public void draw(Batch batch, float parentAlpha) {
 	    	super.draw(batch, parentAlpha);
 	         //font.draw(batch, message, this.getX(), this.getY());
 	    	font.draw(batch, message, this.getX(),this.getY());

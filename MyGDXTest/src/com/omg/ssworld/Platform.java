@@ -22,21 +22,21 @@ public class Platform extends JSActor {
 	
 	Body body;
 	
-	private static int c_width = 160;
-	private static int c_height = 160;
+	protected static int c_width = 160;
+	protected static int c_height = 160;
 	
 	public Platform()
 	{
 
 		super(new TextureRegion(new Texture(Gdx.files.internal("data/NEW_TILE_GRAY.png")),0,0,c_width,c_height));
-
-		
-		//setOriginX(130);
-		//setOriginY(55);
-		
-		//setScale(0.40f);
+		addTag("Platform");
+	}
+	
+	public Platform(TextureRegion t) {
+		super(t);
 		
 		addTag("Platform");
+		
 	}
 	
 	public void addPhysics(World physics_world) {
@@ -99,7 +99,7 @@ private void createBody(World physics_world) {
 
 		// Create a circle shape and set its radius to 6
 		PolygonShape rectangle = new PolygonShape();
-		rectangle.setAsBox(c_width/2.3f, c_height/8);
+		rectangle.setAsBox(c_width/2.0f, c_height/8);
 
 		// Create a fixture definition to apply our shape to
 		FixtureDef fixtureDef = new FixtureDef();
@@ -114,7 +114,6 @@ private void createBody(World physics_world) {
 		// Remember to dispose of any shapes after you're done with them!
 		// BodyDef and FixtureDef don't need disposing, but shapes do.
 		rectangle.dispose();
-		
 		
 		body.setUserData(this);
 	}

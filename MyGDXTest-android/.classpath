@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="/MyGDXTest/libs/gdx.jar" sourcepath="/MyGDXTest/libs/gdx-sources.jar"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/MyGDXTest"/>
-	<classpathentry exported="true" kind="lib" path="/Users/jcbeartooth/Dropbox/Open Mind Gaming/Projects/Kikudojo/Testflight/TestFlightSDK_Android1.2/TestFlightLib.jar"/>
-	<classpathentry kind="output" path="bin/classes"/>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="src" path="gen"/>
+    <classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+    <classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+    <classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+    <classpathentry combineaccessrules="false" exported="true" kind="src" path="/MyGDXTest"/>
+    <classpathentry kind="output" path="bin/classes"/>
+    <classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="/MyGDXTest/libs/gdx.jar" sourcepath="/MyGDXTest/libs/gdx-sources.jar"/>
+    <classpathentry exported="true" kind="lib" path="/Users/jcbeartooth/Dropbox/Open Mind Gaming/Projects/Kikudojo/Testflight/TestFlightSDK_Android1.2/TestFlightLib.jar"/>
 </classpath>

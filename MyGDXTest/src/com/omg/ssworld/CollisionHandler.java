@@ -27,12 +27,21 @@ public class CollisionHandler implements ContactListener {
 	    
 	    //Gdx.app.log(TAG, "Collision: J:" + j.getTags().get(0) + " S: " + s.getTags().get(0));
 
+	    
+	    
 
 	    if(j.hasTag("Platform") && s.hasTag("Jumpable"))
 	    {
-	    	((Jumpable)s).hitGround();
-		    //Gdx.app.log(TAG, "Collision b/w Jumpable and Platform");
 	    	
+    		((Jumpable)s).hitGround();
+
+	    	/*if(j.hasTag("Ceiling"))
+	    	{
+	    		((Jumpable)s).hitGround();
+	    	}
+	    	else {
+	    		((Jumpable)s).hitGround();
+	    	}*/
 	    }
 	    
 

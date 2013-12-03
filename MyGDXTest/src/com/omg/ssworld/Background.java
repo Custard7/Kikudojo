@@ -16,11 +16,14 @@ public class Background extends JSActor {
 	private int height;
 	
 	
+	public boolean isActive;
+	
 	public Background() {
 		super(new TextureRegion(new Texture(Gdx.files.internal("data/front_stars.png")),0,0,1024,1024));
 		
 		addTag("Background");
 		
+		isActive = true;
 	}
 	
 	@Override
@@ -28,8 +31,8 @@ public class Background extends JSActor {
 		super.act(delta);
 		
 		if(this.getX() < x - 1500) {
-			this.remove();
-			
+			//this.remove();
+			this.isActive = false;
 		}
 		
 	}
