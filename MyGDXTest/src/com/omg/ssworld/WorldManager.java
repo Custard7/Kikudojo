@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity;
 import com.omg.gdxlucid.Timer;
+import com.omg.ssworld.background.BackgroundSpawn;
+import com.omg.ssworld.background.MountainBack;
 import com.testflightapp.lib.TestFlight;
 
 public class WorldManager extends JSActor {
@@ -22,7 +24,18 @@ public class WorldManager extends JSActor {
 	private int width;
 	private int height;
 	
+	
+	public int getWorldX()
+	{ return x; }
+	public int getWorldY()
+	{ return y; }
+	public int getWorldWidth()
+	{ return width; }
+	public int getWorldHeight()
+	{ return height; }
+	
 	public float speed = 25;
+	public float decelerationSpeed = 1.25f;
 	
 	Timer worldTimer;
 	Timer backTimer;
@@ -31,7 +44,20 @@ public class WorldManager extends JSActor {
 	
 	World physics_world;
 	
+	public enum WorldState {
+		moving,
+		frozen
+	}
 	
+	WorldState worldState = WorldState.moving;
+	
+	public WorldState getState() {
+		return worldState;
+	}
+	
+	public void setWorldState(WorldState state) {
+		this.worldState = state;
+	}
 	
 	public WorldManager(int x, int y, int width, int height) {
 		 setDimensions(x,y,width,height);
@@ -45,6 +71,15 @@ public class WorldManager extends JSActor {
 		 totalPlayTime = new Timer();
 		 totalPlayTime.start();
 		 
+		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.SkyBack"));
+		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.CloudsBack"));
+		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.MountainBack"));
+		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.CloudsFore"));
+		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.GrassMid"));
+		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.GrassFront"));
+		 
+
+		 
 	}
 	
 	
@@ -57,6 +92,7 @@ public class WorldManager extends JSActor {
 	
 	public void addPhysics(World physics_world) {
 		this.physics_world = physics_world;
+		 addPlatformSpawn(new PlatformSpawn(this, physics_world, 5));
 	}
 	
 	
@@ -73,14 +109,29 @@ public class WorldManager extends JSActor {
 				
 				if(((JSActor)a).hasTag("Background"))
 					customSpeed = ((Background)a).getCustomSpeed();
+				else if(getState() == WorldState.frozen)
+					break;
 				a.translate(-(speed + customSpeed), 0);
 			}
 		}
     	
-    	
-		updatePlatformCreation();
-        updateBackgroundCreation();
+		if(getState() != WorldState.frozen)
+			updatePlatformCreation();
+		else {
+			
+			if(speed > 0)
+				speed -= decelerationSpeed;
+			if(speed < 0)
+				speed = 0;
+			
+		}
 		
+		
+		//updateBackgroundCreation();
+		
+        
+        
+        
 		
 		if(totalPlayTime.getTime() > 60000)
 		{
@@ -88,6 +139,8 @@ public class WorldManager extends JSActor {
 				TestFlight.passCheckpoint("Played for a minute!");
     		totalPlayTime.reset();
 		}
+		
+		
 		
 	}
 	
@@ -101,16 +154,34 @@ public class WorldManager extends JSActor {
 		}*/
 		
 		if(worldTimer.getTime()  > 120000 * Gdx.graphics.getDeltaTime()){
-			PlatformSpawn p = new PlatformSpawn(this, (int) ((Math.random() * 8) + 4));
-			addPlatformSpawn(p);
+			//PlatformSpawn p = new PlatformSpawn(this, physics_world,(int) ((Math.random() * 8) + 4));
+			//addPlatformSpawn(p);
+			
+			for(Actor a : this.getChildren()) {
+				
+				if(((JSActor)a).hasTag("P_spawn")) {
+			
+					if(!((PlatformSpawn)a).isOn()) {
+						((PlatformSpawn)a).turnOn((int) ((Math.random() * 8) + 4));
+						worldTimer.reset();
+
+						return;
+
+					}
+				}
+			}
+			
 			worldTimer.reset();
 		}
 		
 	}
 	
+
+	
 	public void updateBackgroundCreation() {
-		if(backTimer.getTime()  > (70000 / (speed/10.0f))  * Gdx.graphics.getDeltaTime()){
-			
+		//if(backTimer.getTime()  > (70000 / (speed/10.0f))  * Gdx.graphics.getDeltaTime()){
+		if(backTimer.getTime()  > (190000 / (speed/10.0f))  * Gdx.graphics.getDeltaTime()){
+
 			boolean canReuse = false;
 			Background b = null;
 			
@@ -127,13 +198,14 @@ public class WorldManager extends JSActor {
 			}
 			
 			if(!canReuse)
-				b = new StarryBackground();
+				b = new MountainBack();
 			addBackground(b, canReuse);
 			backTimer.reset();
 		}
 	}
 	
 	private float last_y = 0;
+	private Platform lastPlatform;
 	
 	public void addPlatform(Platform p) {
 		
@@ -141,7 +213,11 @@ public class WorldManager extends JSActor {
 		int ranNum = (int)(Math.random() * 100);
 				
 		p.setWorldBounds(x, y, width, height);
-		p.setX(x + width);
+		
+		if(lastPlatform == null)
+			p.setX(x + width);
+		else
+			p.setX(lastPlatform.getX() + lastPlatform.getTextureWidth() - 100);
 		
 		float ran_y = (float)(Math.random() * (height/2));
 		
@@ -155,7 +231,7 @@ public class WorldManager extends JSActor {
 
 		if(!(ranNum >= 70))
 		addActor(p);
-		
+		lastPlatform = p;
 	}
 	
 	
@@ -169,13 +245,35 @@ public class WorldManager extends JSActor {
 		
 	}
 	
+	public void addMonster(Monster p, float yPos) {
+		
+		p.setWorldBounds(x, y, width, height);
+		p.setX(x + width);
+		p.addPhysics(physics_world);
+		p.setY(yPos);
+		addActor(p);
+	}
+	
 	public void addPlatformSpawn(PlatformSpawn p) {
-		float ran_y = (float)(Math.random() * (height/2));
+		//float ran_y = (float)(Math.random() * (height/2));
 
-		p.setY(ran_y);
+		//p.setY(ran_y);
+		p.setY(0);
 		p.setX(x + width);
 		
 		addActor(p);
+		
+		
+	}
+	
+	public void addBackgroundSpawn(BackgroundSpawn s) {
+		float ran_y = 0;
+		float ran_x = x + width;
+		
+		s.setY(ran_y);
+		s.setX(ran_x);
+		
+		addActor(s);
 		
 		
 	}
@@ -185,13 +283,33 @@ public class WorldManager extends JSActor {
 		b.setWorldBounds(x, y, width, height);
 
 		b.setX(x + width);
-		b.setY((float) (-Math.random() * (height/2)));
+		//b.setY((float) (-Math.random() * (height/2)));
+		//b.setY(0);
 		
 		if(!reuse)
 			addActor(b);
 		
 	}
 	
+	
+	private float oldSpeed = 25;
+	public void freezeWorld() {
+		
+		if(getState() != WorldState.frozen) {
+			setWorldState(WorldState.frozen);
+			oldSpeed = speed;
+			//speed = 0;
+		}
+	}
+	
+	public void unfreeze() {
+
+		if(getState() != WorldState.moving) {
+			setWorldState(WorldState.moving);
+			speed = oldSpeed;
+			//worldTimer.reset();
+		}
+	}
 	
 	
 }

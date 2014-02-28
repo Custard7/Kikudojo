@@ -33,6 +33,8 @@ public class Jumpable extends JSActor {
 	boolean canJump = true;
 	boolean jumpedFromGround = false;
 	
+	boolean frozen = false;
+	
 	public float gravity = 100.0f;
 	
 	Body body;
@@ -69,6 +71,9 @@ public class Jumpable extends JSActor {
 	 public void draw (Batch batch, float parentAlpha) {
 		 super.draw(batch, parentAlpha);
 		
+		 if(!frozen)
+		 {
+		 
 		 if(isInAirTimer.getTime() > 14000 * Gdx.graphics.getDeltaTime() && jumpState == JumpableState.onGround && fellFromPlatform)
 		 {
 			jumpState = JumpableState.inAir;
@@ -95,8 +100,11 @@ public class Jumpable extends JSActor {
 
         //MOVEMENT UNDO
         movement.update();
-        translate(movement.getVelocity().x, movement.getVelocity().y);
-		body.setTransform(this.getX() + this.getOriginX() - 100, this.getY() + this.getOriginY() + 100, 0);
+        translate(movement.getVelocity().x* Gdx.graphics.getDeltaTime() * 40, movement.getVelocity().y* Gdx.graphics.getDeltaTime()*40);
+        
+		 }
+		 
+		body.setTransform(this.getX() + this.getOriginX() - 30, this.getY() + this.getOriginY() - 15, 0);
 	 }
 	
 	
@@ -198,6 +206,14 @@ public class Jumpable extends JSActor {
 		body.setUserData(this);
 	}
 	
+	public void freeze() {
+		//if(frozen = false)
+			frozen = true;
+	}
 	
+	public void unfreeze() {
+		//if(frozen = true)
+			frozen = false;
+	}
 	
 }

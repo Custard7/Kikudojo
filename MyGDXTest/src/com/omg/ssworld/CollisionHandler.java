@@ -7,12 +7,26 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.omg.drawing.JSActor;
+import com.omg.screens.GameScreen;
 import com.omg.ssplayer.Jumpable;
 import com.omg.ssplayer.Kiku;
 
 public class CollisionHandler implements ContactListener {
 
 	static String TAG = "COLLISION";
+	
+	WorldManager world;
+	GameScreen gameScreen;
+	
+	
+	
+	public void setWorld(WorldManager world) {
+		this.world = world;
+	}
+	
+	public void setGameScreen(GameScreen screen){
+		this.gameScreen = screen;
+	}
 	
 	@Override
 	public void beginContact(Contact contact) {
@@ -42,6 +56,15 @@ public class CollisionHandler implements ContactListener {
 	    	else {
 	    		((Jumpable)s).hitGround();
 	    	}*/
+	    }
+	    
+	    
+	    if(j.hasTag("Monster") && s.hasTag("Kiku"))
+	    {
+	    	
+	    	//((Kiku)s).hitMonster((Monster)j);
+	    	gameScreen.hitMonster((Monster)j);
+	    	
 	    }
 	    
 

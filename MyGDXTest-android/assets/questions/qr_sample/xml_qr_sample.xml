@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sample Question and Response File -->
+<qrset
+	title="qr_sample"
+	version="1.00"
+	>
+
+	<qrblock num="1" sound="1QR.mp3">
+		<question>Have you already talked to your brother?</question>
+		<a>Yes, we talked on the phone yesterday.</a>
+		<b>Yes, we will talk later today.</b>
+		<c>No, we talked at dinner earlier today.</c>
+		<answer>A</answer>
+		<hint>訳文: もうあなたの兄(または弟)に話しましたか？
+		(A) はい、昨日電話で話しました。
+		(B) はい、今日後で話します。
+		(C) いいえ、今日夕飯の席で話しました。
+		解説: 「もう兄（または弟）に話したか」を聞いている。過去完了形の＜現在までの経験＞が使われているので(B)will talkの未来形は当てはまらない。
+		答え: A
+		</hint>
+	</qrblock>
+	<qrblock num="2" sound="2QR.mp3">
+		<question> Do you play tennis and also dance?</question>
+		<a>Yes, I like to play baseball.</a>
+		<b>No, I play tennis but I don't dance.</b>
+		<c>Yes, I play baseball and I dance.</c>
+		<answer>B</answer>
+		<hint>訳文:　テニスやダンスをしますか？
+		はい、私は野球をするのが好きです。
+		いいえ、テニスはしますがダンスはしません。
+		はい、野球やダンスをします。
+		解説:　 聞かれていることだけに答える。ここでは「テニス」と「ダン　
+　　　　ス」がトピック。
+		答え:　B
+		</hint>
+	</qrblock>
+	<qrblock num="3" sound="3QR.mp3">
+		<question> Were you at the party last night?</question>
+		<a>Yes, I was there two days ago.</a>
+		<b>No, I won't be there tonight.</b>
+		<c>Yes, I got there around 7 p.m.</c>
+		<answer>C</answer>
+		<hint>訳文:　昨夜パーティにいましたか？
+		はい、２日前にいました。
+		いいえ、今夜は行けません。
+		はい、午後７時頃着きました。
+		解説:　時制は過去「きのう」、質問は「パーティーにいたかどうか」。
+		答え:　C
+		</hint>
+	</qrblock>
+	<qrblock num="4" sound="4QR.mp3">
+		<question> Who enjoys cake?　</question>
+		<a>We don't like birthday parties.</a>
+		<b>I do. I love it.</b>
+		<c>I baked the cake.</c>
+		<answer>B</answer>
+		<hint>訳文:　ケーキが好きなのは誰ですか？
+		私達は誕生日会が好きではありません。
+		私です。私は大好きです。
+		そのケーキを焼きました。
+		解説:　トピックはwho「誰」がケーキを好きか。
+		答え:　B
+		</hint>
+	</qrblock>
+	<qrblock num="5" sound="5QR.mp3">
+		<question>Where is the English school located?</question>
+		<a>It's just down the street.</a>
+		<b>It's an old building.</b>
+		<c>It was just over there.</c>
+		<answer>A</answer>
+		<hint>訳文:　英語学校はどこに位置していますか？
+		この道を行ったところです。
+		あそこにありました。
+		解説:　 locate「位置する」。学校の位置を尋ねている。
+		答え:　A
+		</hint>
+	</qrblock>
+	
+	
+
+
+
+
+
+</qrset>

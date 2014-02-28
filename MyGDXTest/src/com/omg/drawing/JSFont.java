@@ -40,4 +40,10 @@ public class JSFont extends Group {
 	    }
 
 	   
+	   
+	  public static BitmapFont loadFont(String font) 
+	  {
+	        return new BitmapFont(Gdx.files.internal("fonts/" + font+ ".fnt"), Gdx.files.internal("fonts/"+font +".png"), false);
+
+	  }
 }

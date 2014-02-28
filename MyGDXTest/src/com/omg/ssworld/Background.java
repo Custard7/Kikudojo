@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.omg.drawing.JSActor;
+import com.omg.sswindler.GameManager;
 
 public class Background extends JSActor {
 
@@ -19,7 +20,8 @@ public class Background extends JSActor {
 	public boolean isActive;
 	
 	public Background() {
-		super(new TextureRegion(new Texture(Gdx.files.internal("data/front_stars.png")),0,0,1024,1024));
+		super(new TextureRegion(GameManager.getAssetsManager().get("data/front_stars.png", Texture.class),0,0,1024,1024));
+
 		
 		addTag("Background");
 		
@@ -30,7 +32,7 @@ public class Background extends JSActor {
 	public void act(float delta) {
 		super.act(delta);
 		
-		if(this.getX() < x - 1500) {
+		if(this.getX() < x - 4000) {
 			//this.remove();
 			this.isActive = false;
 		}

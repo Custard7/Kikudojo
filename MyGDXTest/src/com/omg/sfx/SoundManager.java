@@ -5,7 +5,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Disposable;
 import com.omg.sfx.LRUCache.CacheEntryRemovedListener;
-import com.omg.sfx.SoundManager.LucidSound;;
 
 /**
  * A service that manages the sound effects.
@@ -15,25 +14,13 @@ public class SoundManager
         CacheEntryRemovedListener<LucidSound,Sound>,
         Disposable
 {
-    /**
-     * The available sound files.
-     */
-    public enum LucidSound
-    {
-        JUMP( "sfx/gold_collect.ogg" );
-
-        private final String fileName;
-
-        private LucidSound(
-            String fileName )
-        {
-            this.fileName = fileName;
-        }
-
-        public String getFileName()
-        {
-            return fileName;
-        }
+    
+    
+    public LucidSound JUMP() {
+    	return new LucidSound("sfx/gold_collect.ogg");
+    }
+    public LucidSound QUESTION() {
+    	return new LucidSound("questions/mayo.wav");
     }
 
     /**
@@ -58,7 +45,7 @@ public class SoundManager
      */
     public SoundManager()
     {
-        soundCache = new LRUCache<SoundManager.LucidSound,Sound>( 10 );
+        soundCache = new LRUCache<LucidSound,Sound>( 15 );
         soundCache.setEntryRemovedListener( this );
     }
 
@@ -82,6 +69,17 @@ public class SoundManager
         // play the sound
         Gdx.app.log( TAG, "Playing sound: " + sound.name() );
         soundToPlay.play( volume );
+    }
+    /**
+     * Caches a specific sound
+     */
+    public void load(LucidSound sound) {
+    	Sound soundToPlay = soundCache.get( sound );
+        if( soundToPlay == null ) {
+            FileHandle soundFile = Gdx.files.internal( sound.getFileName() );
+            soundToPlay = Gdx.audio.newSound( soundFile );
+            soundCache.add( sound, soundToPlay );
+        }
     }
 
     /**

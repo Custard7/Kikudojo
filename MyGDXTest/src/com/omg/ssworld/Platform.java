@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.omg.drawing.JSActor;
+import com.omg.sswindler.GameManager;
 
 public class Platform extends JSActor {
 
@@ -22,20 +23,34 @@ public class Platform extends JSActor {
 	
 	Body body;
 	
-	protected static int c_width = 160;
-	protected static int c_height = 160;
+	protected static int c_width = 512;
+	protected static int c_height = 128;
+	
+	
+	public boolean isActive;
+	
+	public int getTextureWidth() {
+		return c_width;
+	}
+	
+	public int getTextureHeight() {
+		return c_height;
+	}
 	
 	public Platform()
 	{
 
-		super(new TextureRegion(new Texture(Gdx.files.internal("data/NEW_TILE_GRAY.png")),0,0,c_width,c_height));
+		//super(new TextureRegion(new Texture(Gdx.files.internal("data/NEW_TILE_GRAY.png")),0,0,c_width,c_height));
+		super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Platform_Generic"), Texture.class),0,0,c_width,c_height));
 		addTag("Platform");
+		isActive = true;
 	}
 	
 	public Platform(TextureRegion t) {
 		super(t);
 		
 		addTag("Platform");
+		isActive = true;
 		
 	}
 	
@@ -43,17 +58,33 @@ public class Platform extends JSActor {
 		createBody(physics_world);
 	}
 	
+	public void removePhysics() {
+		if(physics != null) {
+			if(body != null) {
+				physics.destroyBody(body);
+			}
+			body = null;
+			//body = null;
+		}
+	}
+	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
 		
 		if(this.getX() < x) {
-			body.getWorld().destroyBody(body);
-			this.remove();
+			//body.getWorld().destroyBody(body);
+			//this.remove();
+			this.isActive = false;
+			this.removePhysics();
 			
 		}
 		
-		body.setTransform(this.getX() + this.getOriginX() + c_width/2, this.getY() + this.getOriginY() + c_height, 0);
+		if(body != null) {
+			//body.setTransform(this.getX() + this.getOriginX() + c_width/2, this.getY() + this.getOriginY() + c_height, 0);
+			body.setTransform(this.getX() + this.getOriginX() + c_width/2, this.getY() + this.getOriginY() + c_height, 0);
+
+		}
 	}
 	
 	public void setWorldBounds(int x, int y, int width, int height) {
@@ -85,14 +116,18 @@ public class Platform extends JSActor {
 		//body.setTransform(this.getX(), y, 0);
 	}
 	
+	World physics;
+	
 private void createBody(World physics_world) {
 		
+		this.physics = physics_world;
 		// First we create a body definition
 		BodyDef bodyDef = new BodyDef();
 		// We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 		bodyDef.type = BodyType.KinematicBody;
 		// Set our body's starting position in the world
 		bodyDef.position.set(-5000, -5000);
+		//bodyDef.position.set(0, 0);
 
 		// Create our body in the world using our body definition
 		body = physics_world.createBody(bodyDef);

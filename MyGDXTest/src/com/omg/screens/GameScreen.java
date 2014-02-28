@@ -1,49 +1,41 @@
 package com.omg.screens;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.omg.drawing.JSActor;
-import com.omg.drawing.JSEntity;
-import com.omg.drawing.JSEntity.JSVector2;
 import com.omg.drawing.JSSpriter;
+import com.omg.events.DialogueListener;
+import com.omg.filemanagement.LEDataHandler;
+import com.omg.filemanagement.QRSet.QROptions;
+import com.omg.gui.ABCDDialogue;
+import com.omg.sfx.LucidSound;
 import com.omg.sfx.MusicManager;
-import com.omg.sfx.MusicManager.LucidMusic;
 import com.omg.sfx.SoundManager;
-import com.omg.sfx.SoundManager.LucidSound;
 import com.omg.spriter.TextureProvider;
-import com.omg.ssplayer.Enemy;
 import com.omg.ssplayer.Kiku;
-import com.omg.ssplayer.Player;
 import com.omg.sswindler.GameManager;
 import com.omg.ssworld.CollisionHandler;
-import com.omg.ssworld.Platform;
-import com.omg.ssworld.StarryBackground;
+import com.omg.ssworld.Monster;
 import com.omg.ssworld.WorldManager;
 import com.testflightapp.lib.TestFlight;
 
-public class GameScreen implements Screen, TextureProvider {
+public class GameScreen implements Screen, TextureProvider, Loadable {
 
 	 GameManager gameManager;
 	 
@@ -70,6 +62,35 @@ public class GameScreen implements Screen, TextureProvider {
 	 JSSpriter knight;
 	 
 	 JSActor BASENODE;
+	 
+	 
+	 ABCDDialogue abcdDialogue;
+	 
+	 ShaderProgram shader;
+	 LEDataHandler leDataHandler;
+	 
+	 
+	 
+	 public enum GameState {
+		 
+		 running,
+		 dialogue,
+		 paused,
+		 
+		 
+	 }
+	 
+	 GameState gameState = GameState.running;
+	 
+	 
+	 public GameState getState() {
+		 return gameState;
+	 }
+	 
+	 public void setGameState(GameState state) {
+		 this.gameState = state;
+	 }
+	 
 
      // constructor to keep a reference to the main Game class
       public GameScreen(GameManager gameManager){
@@ -84,7 +105,9 @@ public class GameScreen implements Screen, TextureProvider {
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		
+		
 		OrthographicCamera camera = (OrthographicCamera)stage.getCamera();
+		
 		
 		// modify camera here
 		physics_world.step(1/60f, 6, 2);
@@ -98,13 +121,15 @@ public class GameScreen implements Screen, TextureProvider {
 		camera.far = 10000.0f;
 		camera.zoom = 2;
 		
+		//shader.begin();
+
 		
 		 Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 	        stage.act(Gdx.graphics.getDeltaTime());
 	        stage.draw();
 	       
-		
-	        
+		//shader.end();
+	       
 	     if(player.getY() < -250)
 	    	 player.hitGround();
 		
@@ -121,6 +146,37 @@ public class GameScreen implements Screen, TextureProvider {
 
 	     
 	     debugRenderer.render(physics_world, camera.combined);
+
+	     
+	     switch(getState()) {
+	     
+	     case running:
+	    	 
+	    	 world.unfreeze();
+		  	 abcdDialogue.setVisible(false);
+		  	 player.unfreeze();
+		  		
+	    	 break;
+	     case dialogue:
+	    	 
+	    	 world.freezeWorld();
+		  	abcdDialogue.setVisible(true);
+		  	player.freeze();
+	    	 
+	    	// if(Gdx.input.isKeyPressed(Keys.SPACE))
+	    		// setGameState(GameState.running);
+	    	 
+	    	 break;
+	     case paused:
+	    	 break;
+	     default:
+	    	 break;
+	     
+	     
+	     }
+	     
+	     
+	        Table.drawDebug(stage); // This is optional, but enables debug lines for tables.
 
 		
 	}
@@ -152,7 +208,11 @@ public class GameScreen implements Screen, TextureProvider {
 
 	@Override
 	public void show() {
-  		float w = Gdx.graphics.getWidth();
+		if(!isLoaded())
+			load();
+		
+		
+		float w = Gdx.graphics.getWidth();
   		float h = Gdx.graphics.getHeight();
 
 
@@ -162,15 +222,17 @@ public class GameScreen implements Screen, TextureProvider {
         Gdx.input.setInputProcessor(stage);
         stage.setCamera(camera);
         
-        
-        textures = new HashMap<String, Texture>();
+       
+ 		//stage.setKeyboardFocus(player);
 
         
-
+        //shader = new ShaderProgram(vertexShader, fragmentShader);
         
         
   		physics_world = new World(new Vector2(0,0), true);
   		collisionHandler = new CollisionHandler();
+  		collisionHandler.setWorld(world);
+  		collisionHandler.setGameScreen(this);
   		physics_world.setContactListener(collisionHandler);
   		
   		
@@ -190,22 +252,121 @@ public class GameScreen implements Screen, TextureProvider {
   		world.addPhysics(physics_world);
   		BASENODE.addActor(world);
   		
-
-  		 // create the music manager service
-        musicManager = new MusicManager();
-      //  musicManager.setVolume( preferencesManager.getVolume() );
-        musicManager.setEnabled( true);
-        
-        //musicManager.play(LucidMusic.SWINDLER);
-
-        // create the sound manager service
-        soundManager = new SoundManager();
-       // soundManager.setVolume( preferencesManager.getVolume() );
-        soundManager.setEnabled( true);
-        
+       
   		
-  		//stage.setKeyboardFocus(player);
+  		abcdDialogue = new ABCDDialogue(leDataHandler.getRandomBlock());
+  		abcdDialogue.setVisible(false);
+  		abcdDialogue.setWorldBounds(world);
+  		abcdDialogue.setListener(new DialogueListener() {
+
+			@Override
+			public boolean handle(Event event) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+
+			@Override
+			public void onSelected(QROptions given, QROptions correct, boolean isRight) {
+				// TODO Auto-generated method stub
+				answerSelected(given, correct, isRight);
+			}
+  			
+  		});
+  		abcdDialogue.setFillParent(true);
+  		abcdDialogue.debug();
+  		stage.addActor(abcdDialogue);
+  		
+  		
+
+
+  		
+
 	}
+	
+	private boolean loaded = false;
+	public boolean isLoaded() {
+		return loaded;
+	}
+	
+	public void load() {
+		 
+        textures = new HashMap<String, Texture>();
+        
+
+ 		 // create the music manager service
+       musicManager = new MusicManager();
+     //  musicManager.setVolume( preferencesManager.getVolume() );
+       musicManager.setEnabled( true);
+       
+       //musicManager.play(LucidMusic.SWINDLER);
+
+       // create the sound manager service
+       soundManager = new SoundManager();
+      // soundManager.setVolume( preferencesManager.getVolume() );
+       soundManager.setEnabled( true);
+       
+ 		
+		
+       leDataHandler = new LEDataHandler();
+       leDataHandler.loadQR("qr_sample");
+       for(LucidSound sound : leDataHandler.getSounds()){
+       	soundManager.load(sound);
+       }
+       
+       
+   	LAssetManager aManager = GameManager.getAssetsManager();
+
+   	aManager.load("data/2_Tile.png", Texture.class, "Platform_Generic");
+   	aManager.load("data/Eye_Still.png",Texture.class, "Enemy");
+   	aManager.load("data/background/back_clouds.png",Texture.class, "Back Clouds");
+   	aManager.load("data/background/front_clouds.png",Texture.class, "Front Clouds");
+   	aManager.load("data/background/front_f.png",Texture.class, "Front F");
+   	aManager.load("data/background/mid_f.png",Texture.class, "Mid F");
+   	aManager.load("data/background/back_f.png",Texture.class, "Back F");
+   	aManager.load("data/background/sky.png",Texture.class, "Sky");
+   	aManager.load("data/front_stars.png",Texture.class, "Front Stars");
+   	aManager.load("data/laser.png",Texture.class, "Platform Spawn");
+   	
+   	aManager.load("data/player/actual_sprite_sheet.png",Texture.class, "Kiku");
+
+   	
+
+   	
+   	while(!aManager.update()) {};	
+   	
+		
+		loaded = true;
+	}
+	
+	
+	
+	public void hitMonster(Monster j) {
+		
+		if(getState() == GameState.running) {
+			setGameState(GameState.dialogue);
+			//soundManager.play(soundManager.QUESTION());
+			soundManager.play(abcdDialogue.getQRBlock().getQuestionSound());
+			
+		}
+		
+		
+	}
+	
+	
+	public void answerSelected(QROptions given, QROptions correct, boolean isRight) {
+		
+		if(isRight) {
+			setGameState(GameState.running);
+			abcdDialogue.setQRBlock(leDataHandler.getRandomBlock());
+		}
+		else {
+			
+			//setGameState(GameState.running);
+		}
+	}
+	
+	
+	
 
 	@Override
 	public void hide() {
@@ -226,6 +387,19 @@ public class GameScreen implements Screen, TextureProvider {
 	public void dispose() {
 		//batch.dispose();
         stage.dispose();
+        
+       	AssetManager aManager = GameManager.getAssetsManager();
+        
+    	aManager.unload("data/2_Tile.png");
+       	aManager.unload("data/big_pixel_coin.png");
+       	aManager.unload("data/background/back_clouds.png");
+       	aManager.unload("data/background/front_clouds.png");
+       	aManager.unload("data/background/front_f.png");
+       	aManager.unload("data/background/mid_f.png");
+       	aManager.unload("data/background/back_f.png");
+       	aManager.unload("data/background/sky.png");
+       	aManager.unload("data/front_stars.png");
+       	aManager.unload("data/laser.png");
 
 	}
 	
@@ -245,5 +419,29 @@ public class GameScreen implements Screen, TextureProvider {
 	    textures.remove(filename);
 	    System.out.println("Texture " + filename + " disposed");
 	  }
+	  
+	  
+	  String vertexShader = "attribute vec4 a_position;    \n" + 
+              "attribute vec4 a_color;\n" +
+              "attribute vec2 a_texCoord0;\n" + 
+              "uniform mat4 u_worldView;\n" + 
+              "varying vec4 v_color;" + 
+              "varying vec2 v_texCoords;" + 
+              "void main()                  \n" + 
+              "{                            \n" + 
+              "   v_color = vec4(1, 1, 1, 1); \n" + 
+              "   v_texCoords = a_texCoord0; \n" + 
+              "   gl_Position =  u_worldView * a_position;  \n"      + 
+              "}                            \n" ;
+	  String fragmentShader = "#ifdef GL_ES\n" +
+                "precision mediump float;\n" + 
+                "#endif\n" + 
+                "varying vec4 v_color;\n" + 
+                "varying vec2 v_texCoords;\n" + 
+                "uniform sampler2D u_texture;\n" + 
+                "void main()                                  \n" + 
+                "{                                            \n" + 
+                "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" + 
+                "}";
 
 }

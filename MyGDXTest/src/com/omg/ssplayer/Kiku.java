@@ -11,16 +11,26 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.omg.drawing.JSAnimation;
+import com.omg.sswindler.GameManager;
+import com.omg.ssworld.Monster;
 import com.testflightapp.lib.TestFlight;
 
 public class Kiku extends Jumpable {
 
+	JSAnimation runningAnimation;
 	
 	public Kiku(){
-	
-		setRegion(new TextureRegion(new Texture(Gdx.files.internal("data/bum.png")),0,0,256/2,256));
+		runningAnimation = new JSAnimation("Running", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Kiku"), Texture.class), 150, 208, 8);
 
 		
+		
+		//setRegion(new TextureRegion(new Texture(Gdx.files.internal("data/bum.png")),0,0,256/2,256));
+
+		setRegion(runningAnimation.getRegion());
+		
+		
+		addTag("Kiku");
 	}
 	
 	
@@ -28,16 +38,23 @@ public class Kiku extends Jumpable {
 	public void act(float delta) {
 		super.act(delta);
 		
-		setZIndex(10000);
+		setZIndex(1000);
 
     	
     	if(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched())
     	{
     		jump(2000.0f);
     	}
+    	
+    	TextureRegion region = runningAnimation.update(delta);
+    	
+    	if(region != null)
+    		setRegion(region);
         
 		
 	}
+	
+	
 	
 	
 	
