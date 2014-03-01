@@ -24,6 +24,7 @@ import com.omg.events.DialogueListener;
 import com.omg.filemanagement.LEDataHandler;
 import com.omg.filemanagement.QRSet.QROptions;
 import com.omg.gui.ABCDDialogue;
+import com.omg.gui.VersusDialogue;
 import com.omg.sfx.LucidSound;
 import com.omg.sfx.MusicManager;
 import com.omg.sfx.SoundManager;
@@ -66,6 +67,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	 
 	 ABCDDialogue abcdDialogue;
 	 
+	 
 	 ShaderProgram shader;
 	 LEDataHandler leDataHandler;
 	 
@@ -74,7 +76,10 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	 public enum GameState {
 		 
 		 running,
+		 showingVersus,
 		 dialogue,
+		 leavingVersusCorrect,
+		 leavingVersusIncorrect,
 		 paused,
 		 
 		 
@@ -157,6 +162,20 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		  	 player.unfreeze();
 		  		
 	    	 break;
+	     case showingVersus:
+	    	 
+	    	 world.freezeWorld();
+	    	 player.freeze();
+	    	 
+	    	 //versusDialogue.setVisible(true);
+	    	 
+	    	 
+	    	 //
+	    	 
+	    	 //TODO: VS Dialogue
+	    	 
+	    	 
+	    	 break;
 	     case dialogue:
 	    	 
 	    	 world.freezeWorld();
@@ -206,79 +225,86 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		stage.setViewport(width, height, true);
 	}
 
+	boolean hasShown = false;
+	
 	@Override
 	public void show() {
 		if(!isLoaded())
 			load();
 		
-		
-		float w = Gdx.graphics.getWidth();
-  		float h = Gdx.graphics.getHeight();
+		if(!hasShown) {
+			
+			float w = Gdx.graphics.getWidth();
+	  		float h = Gdx.graphics.getHeight();
+	
+	
+	  	    Camera camera = new OrthographicCamera(1, h/w);
+	  		
+	  		stage = new Stage(w,h,true);
+	        Gdx.input.setInputProcessor(stage);
+	        stage.setCamera(camera);
+	        
+	       
+	 		//stage.setKeyboardFocus(player);
+	
+	        
+	        //shader = new ShaderProgram(vertexShader, fragmentShader);
+	        
+	        
+	  		physics_world = new World(new Vector2(0,0), true);
+	  		collisionHandler = new CollisionHandler();
+	  		collisionHandler.setWorld(world);
+	  		collisionHandler.setGameScreen(this);
+	  		physics_world.setContactListener(collisionHandler);
+	  		
+	  		
+	  		BASENODE = new JSActor();
+	  		stage.addActor(BASENODE);
+	  		
+	  		player = new Kiku();
+	  		player.addPhysics(physics_world);
+	  		BASENODE.addActor(player);
+	  		
+	  		//knight = new JSSpriter("data/hero/BetaFormatHero.SCML",this);
+	  		//BASENODE.addActor(knight);
+	
+	
+	  		
+	  		world = new WorldManager(-1500,-720/2,1280 * 3,720 * 2);
+	  		world.addPhysics(physics_world);
+	  		BASENODE.addActor(world);
+	  		
+	  		
 
+	  		
+	  		
+	       
+	  		
+	  		abcdDialogue = new ABCDDialogue(leDataHandler.getRandomBlock());
+	  		abcdDialogue.setVisible(false);
+	  		abcdDialogue.setWorldBounds(world);
+	  		abcdDialogue.setListener(new DialogueListener() {
+	
+				@Override
+				public boolean handle(Event event) {
+					// TODO Auto-generated method stub
+					return true;
+				}
+	
+				@Override
+				public void onSelected(QROptions given, QROptions correct, boolean isRight) {
+					// TODO Auto-generated method stub
+					answerSelected(given, correct, isRight);
+				}
+	  			
+	  		});
+	  		abcdDialogue.setFillParent(true);
+	  		abcdDialogue.debug();
+	  		//stage.addActor(abcdDialogue);
+  		
+		}
 
-  	    Camera camera = new OrthographicCamera(1, h/w);
-  		
-  		stage = new Stage(w,h,true);
-        Gdx.input.setInputProcessor(stage);
-        stage.setCamera(camera);
-        
-       
- 		//stage.setKeyboardFocus(player);
-
-        
-        //shader = new ShaderProgram(vertexShader, fragmentShader);
-        
-        
-  		physics_world = new World(new Vector2(0,0), true);
-  		collisionHandler = new CollisionHandler();
-  		collisionHandler.setWorld(world);
-  		collisionHandler.setGameScreen(this);
-  		physics_world.setContactListener(collisionHandler);
-  		
-  		
-  		BASENODE = new JSActor();
-  		stage.addActor(BASENODE);
-  		
-  		player = new Kiku();
-  		player.addPhysics(physics_world);
-  		BASENODE.addActor(player);
-  		
-  		//knight = new JSSpriter("data/hero/BetaFormatHero.SCML",this);
-  		//BASENODE.addActor(knight);
-
-
-  		
-  		world = new WorldManager(-1500,-720/2,1280 * 3,720 * 2);
-  		world.addPhysics(physics_world);
-  		BASENODE.addActor(world);
-  		
-       
-  		
-  		abcdDialogue = new ABCDDialogue(leDataHandler.getRandomBlock());
-  		abcdDialogue.setVisible(false);
-  		abcdDialogue.setWorldBounds(world);
-  		abcdDialogue.setListener(new DialogueListener() {
-
-			@Override
-			public boolean handle(Event event) {
-				// TODO Auto-generated method stub
-				return true;
-			}
-
-			@Override
-			public void onSelected(QROptions given, QROptions correct, boolean isRight) {
-				// TODO Auto-generated method stub
-				answerSelected(given, correct, isRight);
-			}
-  			
-  		});
-  		abcdDialogue.setFillParent(true);
-  		abcdDialogue.debug();
-  		stage.addActor(abcdDialogue);
-  		
-  		
-
-
+  		hasShown = true;
   		
 
 	}
@@ -317,7 +343,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	LAssetManager aManager = GameManager.getAssetsManager();
 
    	aManager.load("data/2_Tile.png", Texture.class, "Platform_Generic");
-   	aManager.load("data/Eye_Still.png",Texture.class, "Enemy");
+   	aManager.load("data/eye_sprite_sheet.png",Texture.class, "Enemy");
    	aManager.load("data/background/back_clouds.png",Texture.class, "Back Clouds");
    	aManager.load("data/background/front_clouds.png",Texture.class, "Front Clouds");
    	aManager.load("data/background/front_f.png",Texture.class, "Front F");
@@ -328,6 +354,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	aManager.load("data/laser.png",Texture.class, "Platform Spawn");
    	
    	aManager.load("data/player/actual_sprite_sheet.png",Texture.class, "Kiku");
+   	
+   	aManager.load("data/background.png", Texture.class, "VS Back");
+   	aManager.load("data/wind.png", Texture.class, "VS Swoosh");
 
    	
 
@@ -343,9 +372,13 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	public void hitMonster(Monster j) {
 		
 		if(getState() == GameState.running) {
-			setGameState(GameState.dialogue);
+			setGameState(GameState.showingVersus);
 			//soundManager.play(soundManager.QUESTION());
 			soundManager.play(abcdDialogue.getQRBlock().getQuestionSound());
+			
+			
+			
+			gameManager.setScreen(new VersusScreen(gameManager, this, abcdDialogue));
 			
 		}
 		

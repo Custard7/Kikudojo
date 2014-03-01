@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.omg.drawing.JSActor;
+import com.omg.drawing.JSAnimation;
 import com.omg.sswindler.GameManager;
 
 public class Monster extends JSActor {
@@ -21,15 +22,23 @@ public class Monster extends JSActor {
 	
 	Body body;
 	
-	protected static int c_width = 447;
-	protected static int c_height = 234;
+	protected static int c_width = 200;
+	protected static int c_height = 160;
+	
+	JSAnimation idleAnimation;
+
 	
 	public Monster()
 	{
+		super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class),0,0,c_width,c_height));
 
+		idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class), c_width, c_height, 10, 100);		
+		setRegion(idleAnimation.getRegion());
+
+		this.setScale(2);
+		
 		//super(new TextureRegion(new Texture(Gdx.files.internal("data/big_pixel_coin.png")),0,0,c_width,c_height));
 		//super(new TextureRegion(GameManager.getAssetsManager().get("data/big_pixel_coin.png", Texture.class),0,0,c_width,c_height));
-		super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class),0,0,c_width,c_height));
 
 		addTag("Monster");
 	}
@@ -54,6 +63,12 @@ public class Monster extends JSActor {
 			this.remove();
 			
 		}
+		
+		TextureRegion region = idleAnimation.update(delta);
+    	
+    	if(region != null)
+    		setRegion(region);
+		
 		
 		body.setTransform(this.getX() + this.getOriginX() + c_width/2, this.getY() + this.getOriginY() + c_height/2, 0);
 	}

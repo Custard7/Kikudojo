@@ -21,7 +21,7 @@ public class Kiku extends Jumpable {
 	JSAnimation runningAnimation;
 	
 	public Kiku(){
-		runningAnimation = new JSAnimation("Running", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Kiku"), Texture.class), 150, 208, 8);
+		runningAnimation = new JSAnimation("Running", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Kiku"), Texture.class), 150, 208, 8, 50);
 
 		
 		

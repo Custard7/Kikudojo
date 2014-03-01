@@ -7,13 +7,13 @@ import java.util.Random;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity;
 import com.omg.gdxlucid.Timer;
 import com.omg.ssworld.background.BackgroundSpawn;
-import com.omg.ssworld.background.MountainBack;
 import com.testflightapp.lib.TestFlight;
 
 public class WorldManager extends JSActor {
@@ -71,13 +71,16 @@ public class WorldManager extends JSActor {
 		 totalPlayTime = new Timer();
 		 totalPlayTime.start();
 		 
-		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.SkyBack"));
-		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.CloudsBack"));
-		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.MountainBack"));
-		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.CloudsFore"));
-		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.GrassMid"));
-		 addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.GrassFront"));
+		/* addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.SkyBack"));
+
+		 */
 		 
+		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Sky", 0, 0))); 				//Sky Back
+		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Back Clouds", -15, -100))); 	//Clouds Back
+		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Back F", -10, -200))); 		//Mountain Back
+		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front Clouds", 0, 300))); 		//Clouds Foreground
+		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Mid F", 1, -250))); 			//Grass Middle
+		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front F", 4, -400))); 			//Grass Front
 
 		 
 	}
@@ -177,7 +180,7 @@ public class WorldManager extends JSActor {
 	}
 	
 
-	
+	/*
 	public void updateBackgroundCreation() {
 		//if(backTimer.getTime()  > (70000 / (speed/10.0f))  * Gdx.graphics.getDeltaTime()){
 		if(backTimer.getTime()  > (190000 / (speed/10.0f))  * Gdx.graphics.getDeltaTime()){
@@ -202,7 +205,7 @@ public class WorldManager extends JSActor {
 			addBackground(b, canReuse);
 			backTimer.reset();
 		}
-	}
+	}*/
 	
 	private float last_y = 0;
 	private Platform lastPlatform;

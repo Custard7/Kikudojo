@@ -45,7 +45,7 @@ public class JSAnimation {
 	Timer animationTimer;
 	
 	
-	public JSAnimation(String name, Texture t, int width, int height, int frames) {
+	public JSAnimation(String name, Texture t, int width, int height, int frames, int speed) {
 		this.texture = t;
 		
 		region = new TextureRegion(t);
@@ -54,7 +54,7 @@ public class JSAnimation {
 		this.width = width;
 		this.height = height;
 		
-		
+		this.speed = speed;
 		
 		region.setRegion(startX, startY, width, height);
 		

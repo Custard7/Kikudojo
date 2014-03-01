@@ -65,7 +65,10 @@ public class MainMenuScreen implements Screen, TextureProvider {
 	        
 	
 	    if(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched())
-	    	gameManager.gotoGameScreen();
+	    	//gameManager.gotoGameScreen();
+	    {
+	    	gameManager.loadScreen(new GameScreen(gameManager));
+	    }
 		
 	}
 

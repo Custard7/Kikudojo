@@ -22,16 +22,13 @@ public class BackgroundSpawn extends JSActor {
 	Timer timer;
 	Class<Background> c;
 	
+	boolean useReflection = false;
+	BProperties bProperties;
+	
 	public BackgroundSpawn(WorldManager manager, String backgroundClassPath){
 		super(new TextureRegion(GameManager.getAssetsManager().get("data/laser.png", Texture.class),0,0,32,64));
 
-		this.worldManager = manager;
-		
-		timer = new Timer();
-		timer.start();
-		
-		addTag("STATIC");
-		addTag("B_Spawn");
+		init(manager);
 		
 		// with reflection
 		try {
@@ -40,6 +37,31 @@ public class BackgroundSpawn extends JSActor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		useReflection = true;
+		
+	}
+	
+	public BackgroundSpawn(WorldManager manager, BProperties p) {
+		super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath(p.getFileName()), Texture.class),0,0,p.getWidth(),p.getHeight()));
+
+		init(manager);
+		
+		bProperties = p;
+		
+		useReflection = false;
+		
+	}
+	
+	private void init(WorldManager manager) {
+		this.worldManager = manager;
+		
+		timer = new Timer();
+		timer.start();
+		
+		addTag("STATIC");
+		addTag("B_Spawn");
+		
 	}
 	
 	
@@ -90,16 +112,22 @@ public class BackgroundSpawn extends JSActor {
 				}
 			}
 			
-			if(!canReuse)
-				try {
-					b = c.newInstance();
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			if(!canReuse) {
+				
+				if(useReflection) {
+					try {
+						b = c.newInstance();
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					b = new GrasslandBackgrounds(bProperties);
 				}
+			}
 			addBackground(b, canReuse);			
 			timer.reset();
 			
