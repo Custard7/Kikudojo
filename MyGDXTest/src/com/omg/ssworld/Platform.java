@@ -41,7 +41,14 @@ public class Platform extends JSActor {
 	{
 
 		//super(new TextureRegion(new Texture(Gdx.files.internal("data/NEW_TILE_GRAY.png")),0,0,c_width,c_height));
-		super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Platform_Generic"), Texture.class),0,0,c_width,c_height));
+		//super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Platform_Generic"), Texture.class),0,0,c_width,c_height));
+		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Platform_Generic"),0,0,c_width,c_height));
+
+
+		
+		//super(new TextureRegion(GameManager.getAssetsManager().get("data/2_Tile.png", Texture.class),0,0,c_width,c_height));
+		//super(new TextureRegion(new Texture(Gdx.files.internal(GameManager.getAssetsManager().getPath("Platform_Generic"))),0,0,c_width,c_height));
+
 		addTag("Platform");
 		isActive = true;
 	}

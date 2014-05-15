@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSFont;
@@ -25,6 +26,8 @@ import com.testflightapp.lib.TestFlight;
 
 public class MainMenuScreen implements Screen, TextureProvider {
 
+	
+	
 	GameManager gameManager;
 	
 	 MusicManager musicManager;
@@ -35,6 +38,8 @@ public class MainMenuScreen implements Screen, TextureProvider {
 	 
 	 JSFont menuText;
 	 JSFont touchToContinueText;
+	 
+	 JSActor background;
 
 	 HashMap<String, Texture> textures;
 
@@ -63,7 +68,8 @@ public class MainMenuScreen implements Screen, TextureProvider {
 	        stage.act(Gdx.graphics.getDeltaTime());
 	        stage.draw();
 	        
-	
+
+	        
 	    if(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched())
 	    	//gameManager.gotoGameScreen();
 	    {
@@ -75,20 +81,28 @@ public class MainMenuScreen implements Screen, TextureProvider {
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-		stage.setViewport(width, height, true);
+		//stage.setViewport(width, height, true);
+		stage.setViewport(GameManager.VIRTUAL_WIDTH, GameManager.VIRTUAL_HEIGHT, true);
 	}
 
 	@Override
 	public void show() {
   		float w = Gdx.graphics.getWidth();
   		float h = Gdx.graphics.getHeight();
+		//float w = GameManager.VIRTUAL_WIDTH;
+		//float h = GameManager.VIRTUAL_HEIGHT;
+  		//Gdx.gl.glViewport(0, 0, (int)w, (int)h);
 
-
+  		Gdx.app.log("MONSTER", "w: " + w + " h: " + h);
+  		
   	    Camera camera = new OrthographicCamera(1, h/w);
   		
   		stage = new Stage(w,h,true);
         Gdx.input.setInputProcessor(stage);
         stage.setCamera(camera);
+        
+        
+
         
         textures = new HashMap<String, Texture>();
 
@@ -96,15 +110,20 @@ public class MainMenuScreen implements Screen, TextureProvider {
   		BASENODE = new JSActor();
   		stage.addActor(BASENODE);
   		
+  		
   		BASENODE.setPosition(-300, 200);
+ 
+  		background = new JSActor(new TextureRegion(new Texture(Gdx.files.internal("data/splash screen.png")),0,0,1280,720));
+  		background.setPosition(-340, -560);
+  		BASENODE.addActor(background);
   		
   		menuText = new JSFont("Kikudojo");
   		menuText.setPosition(100,0);
-  		BASENODE.addActor(menuText);
+  		//BASENODE.addActor(menuText);
   		
   		touchToContinueText = new JSFont("Touch to continue.");
   		touchToContinueText.setPosition(50,-150);
-  		BASENODE.addActor(touchToContinueText);
+  		//BASENODE.addActor(touchToContinueText);
   		
   		
   		
@@ -122,7 +141,7 @@ public class MainMenuScreen implements Screen, TextureProvider {
        // soundManager.setVolume( preferencesManager.getVolume() );
         soundManager.setEnabled( true);
         
-  		
+  		Gdx.app.log("MONSTER", "Showing Main Menu");
 		
 	}
 

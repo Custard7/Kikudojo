@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSFont;
@@ -29,6 +30,9 @@ public class LoadingScreen implements Screen, TextureProvider {
 	 
 	 JSFont menuText;
 	 JSFont touchToContinueText;
+	 
+	 JSActor background;
+
 
 	 HashMap<String, Texture> textures;
 
@@ -73,7 +77,8 @@ public class LoadingScreen implements Screen, TextureProvider {
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-		stage.setViewport(width, height, true);
+		//stage.setViewport(width, height, true);
+		stage.setViewport(GameManager.VIRTUAL_WIDTH, GameManager.VIRTUAL_HEIGHT, true);
 	}
 
 	@Override
@@ -95,6 +100,10 @@ public class LoadingScreen implements Screen, TextureProvider {
   		stage.addActor(BASENODE);
   		
   		BASENODE.setPosition(-300, 200);
+  		
+  		background = new JSActor(new TextureRegion(new Texture(Gdx.files.internal("data/loading background.png")),0,0,1280,720));
+  		background.setPosition(-340, -560);
+  		BASENODE.addActor(background);
   		
   		menuText = new JSFont("");
   		menuText.setPosition(100,0);

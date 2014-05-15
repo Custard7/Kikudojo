@@ -35,6 +35,7 @@ public class WorldManager extends JSActor {
 	{ return height; }
 	
 	public float speed = 25;
+	public float defaultSpeed = 20;
 	public float decelerationSpeed = 1.25f;
 	
 	Timer worldTimer;

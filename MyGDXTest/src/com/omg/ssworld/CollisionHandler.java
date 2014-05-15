@@ -76,9 +76,20 @@ public class CollisionHandler implements ContactListener {
 		// TODO Auto-generated method stub
 	   // Gdx.app.log(TAG, "End Contact! :(");
 
+		Body a = null;
+		Body b = null;
 		
-		Body a=contact.getFixtureA().getBody();
-	    Body b=contact.getFixtureB().getBody();
+		if(contact.getFixtureA() == null)
+			return;
+		
+		a=contact.getFixtureA().getBody();
+		
+		if(contact.getFixtureB() == null)
+			return;
+		
+		b=contact.getFixtureB().getBody();
+		
+		
 	    JSActor j = (JSActor)a.getUserData();
 	    JSActor s = (JSActor)b.getUserData();
 	    

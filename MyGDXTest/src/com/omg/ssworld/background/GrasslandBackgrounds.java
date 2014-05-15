@@ -8,7 +8,9 @@ import com.omg.ssworld.Background;
 public class GrasslandBackgrounds extends Background {
 
 	public GrasslandBackgrounds(BProperties properties) {
-		setRegion(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath(properties.getFileName()), Texture.class),0,0,properties.getWidth(),properties.getHeight()));
+		//setRegion(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath(properties.getFileName()), Texture.class),0,0,properties.getWidth(),properties.getHeight()));
+		setRegion(new TextureRegion(GameManager.getAssetsManager().getTexture(properties.getFileName()),0,0,properties.getWidth(),properties.getHeight()));
+
 		setCustomSpeed(properties.getCustomSpeed());
 		
 		setScale(properties.getScale());

@@ -26,7 +26,8 @@ public class BackgroundSpawn extends JSActor {
 	BProperties bProperties;
 	
 	public BackgroundSpawn(WorldManager manager, String backgroundClassPath){
-		super(new TextureRegion(GameManager.getAssetsManager().get("data/laser.png", Texture.class),0,0,32,64));
+		//super(new TextureRegion(GameManager.getAssetsManager().get("data/laser.png", Texture.class),0,0,32,64));
+		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Laser"),0,0,32,64));
 
 		init(manager);
 		
@@ -44,6 +45,7 @@ public class BackgroundSpawn extends JSActor {
 	
 	public BackgroundSpawn(WorldManager manager, BProperties p) {
 		super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath(p.getFileName()), Texture.class),0,0,p.getWidth(),p.getHeight()));
+		//super(new TextureRegion(GameManager.getAssetsManager().getTexture(p.getFileName()),0,0,p.getWidth(),p.getHeight()));
 
 		init(manager);
 		
@@ -69,6 +71,9 @@ public class BackgroundSpawn extends JSActor {
 	public void act(float delta) {
 		super.act(delta);
 		
+		float speed = worldManager.speed;
+		if(this.getChildren().size <= 3)
+			speed = 1000;
 		
 		for(Actor a : this.getChildren()) {
 			
@@ -80,7 +85,7 @@ public class BackgroundSpawn extends JSActor {
 					customSpeed = ((Background)a).getCustomSpeed();
 				else if(worldManager.getState() == WorldState.frozen)
 					break;
-				a.translate(-(worldManager.speed + customSpeed), 0);
+				a.translate(-(speed + customSpeed), 0);
 			}
 		}
 		

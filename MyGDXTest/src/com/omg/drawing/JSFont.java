@@ -18,9 +18,10 @@ public class JSFont extends Group {
 	 
 	 public JSFont(String message){
 		 super();
-		 
-	        font = new BitmapFont(Gdx.files.internal("fonts/arialblack.fnt"), Gdx.files.internal("fonts/arialblack.png"), false);
-	        
+
+	
+	        font = new BitmapFont(Gdx.files.internal("fonts/ktegaki.fnt"), Gdx.files.internal("fonts/ktegaki.png"), false);
+	        //font = new BitmapFont();
 	        
 	        r = 1.0f;
 	        g = 1.0f;
@@ -45,5 +46,9 @@ public class JSFont extends Group {
 	  {
 	        return new BitmapFont(Gdx.files.internal("fonts/" + font+ ".fnt"), Gdx.files.internal("fonts/"+font +".png"), false);
 
+	  }
+	  
+	  public void setText(String text) {
+		  this.message = text;
 	  }
 }

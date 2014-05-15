@@ -109,7 +109,8 @@ public class VersusScreen implements Screen, TextureProvider {
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-		stage.setViewport(width, height, true);
+		//stage.setViewport(width, height, true);
+		stage.setViewport(GameManager.VIRTUAL_WIDTH, GameManager.VIRTUAL_HEIGHT, true);
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class VersusScreen implements Screen, TextureProvider {
   		BASENODE.setPosition(-300, 200);
   		
   		menuText = new JSFont("VS");
-  		menuText.setPosition(100,0);
+  		menuText.setPosition(275,0);
   		BASENODE.addActor(menuText);
   		
   		touchToContinueText = new JSFont("Fight!");

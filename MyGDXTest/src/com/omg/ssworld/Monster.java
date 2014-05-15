@@ -30,9 +30,16 @@ public class Monster extends JSActor {
 	
 	public Monster()
 	{
-		super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class),0,0,c_width,c_height));
+		//super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class),0,0,c_width,c_height));
+	   	
+		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Enemy"),0,0,c_width,c_height));
 
-		idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class), c_width, c_height, 10, 100);		
+		
+		Gdx.app.log("MONSTER", "ENEMY TEXTURE GET : " + GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class).getTextureObjectHandle() + " <<<<");
+		Gdx.app.log("MONSTER", "ENEMY TEXTURE GET : " + GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Kiku"), Texture.class).getTextureObjectHandle() + " <<<<");
+
+		//idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class), c_width, c_height, 10, 100);		
+		idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().getTexture("Enemy"), c_width, c_height, 10, 100);		
 		setRegion(idleAnimation.getRegion());
 
 		this.setScale(2);
@@ -54,6 +61,12 @@ public class Monster extends JSActor {
 		createBody(physics_world);
 	}
 	
+	public void removePhysics() {
+		body.getWorld().destroyBody(body);
+	}
+	
+	double time = 0.0;
+	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
@@ -68,7 +81,9 @@ public class Monster extends JSActor {
     	
     	if(region != null)
     		setRegion(region);
-		
+    	
+    	time+=.04;
+    	this.setY(this.getY() + (float)Math.sin(time)*1);
 		
 		body.setTransform(this.getX() + this.getOriginX() + c_width/2, this.getY() + this.getOriginY() + c_height/2, 0);
 	}
@@ -101,6 +116,7 @@ public class Monster extends JSActor {
 		super.setY(y);
 		//body.setTransform(this.getX(), y, 0);
 	}
+	
 	
 private void createBody(World physics_world) {
 		

@@ -68,7 +68,8 @@ public class ABCDDialogue extends Table {
 		
 		upRegion = skin.getRegion("up");
 		downRegion = skin.getRegion("down");
-		buttonFont = JSFont.loadFont("arialblack");
+		//buttonFont = JSFont.loadFont("arialblack");
+		buttonFont = JSFont.loadFont("ktegaki");
 
 		TextButtonStyle style = new TextButtonStyle();
 		style.up = new TextureRegionDrawable(upRegion);

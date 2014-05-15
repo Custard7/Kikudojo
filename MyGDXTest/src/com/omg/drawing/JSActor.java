@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.omg.sswindler.GameManager;
 
 public class JSActor extends Group {
 
@@ -69,6 +70,7 @@ public class JSActor extends Group {
 	
 	@Override
 	 public void draw (Batch batch, float parentAlpha) {
+		
 		
 		if(cDirection == ChildrenDrawDirection.inFront) {
 			super.draw(batch, parentAlpha);

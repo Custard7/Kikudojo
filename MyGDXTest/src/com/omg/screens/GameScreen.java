@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.omg.drawing.JSActor;
+import com.omg.drawing.JSFont;
 import com.omg.drawing.JSSpriter;
 import com.omg.events.DialogueListener;
 import com.omg.filemanagement.LEDataHandler;
@@ -64,6 +65,11 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	 
 	 JSActor BASENODE;
 	 
+	 JSFont distanceCounter;
+	 float distanceTraveled = 0.0f;
+	 
+	 float speedBonus = 2f;
+	 
 	 
 	 ABCDDialogue abcdDialogue;
 	 
@@ -104,6 +110,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
       }
 	
       float zoom = 0;
+      
 	
 	@Override
 	public void render(float delta) {
@@ -160,7 +167,13 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	    	 world.unfreeze();
 		  	 abcdDialogue.setVisible(false);
 		  	 player.unfreeze();
-		  		
+		  	 
+		  	 distanceTraveled+=world.speed*5;
+		  	 distanceCounter.setText((int)(distanceTraveled/1000.0f) + " Squirrels, " + (int)(world.speed/1.0f) + " Sq/s");
+		  	 
+		  	 //timeWithoutError += 1f;
+		  	 world.speed = (float) Math.log(speedBonus) * world.defaultSpeed;
+		  	 
 	    	 break;
 	     case showingVersus:
 	    	 
@@ -222,7 +235,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 
 	@Override
 	public void resize(int width, int height) {
-		stage.setViewport(width, height, true);
+		//stage.setViewport(width, height, true);
+		stage.setViewport(GameManager.VIRTUAL_WIDTH, GameManager.VIRTUAL_HEIGHT, true);
+
 	}
 
 	boolean hasShown = false;
@@ -275,7 +290,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		BASENODE.addActor(world);
 	  		
 	  		
-
+	  		distanceCounter = new JSFont("0.0 Squirrels");
+	  		distanceCounter.setPosition(-1000,-50);
+	  		BASENODE.addActor(distanceCounter);
 	  		
 	  		
 	       
@@ -339,12 +356,13 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
        	soundManager.load(sound);
        }
        
-       
+     
    	LAssetManager aManager = GameManager.getAssetsManager();
+   	aManager.clear();
 
    	aManager.load("data/2_Tile.png", Texture.class, "Platform_Generic");
    	aManager.load("data/eye_sprite_sheet.png",Texture.class, "Enemy");
-   	aManager.load("data/background/back_clouds.png",Texture.class, "Back Clouds");
+  	aManager.load("data/background/back_clouds.png",Texture.class, "Back Clouds");
    	aManager.load("data/background/front_clouds.png",Texture.class, "Front Clouds");
    	aManager.load("data/background/front_f.png",Texture.class, "Front F");
    	aManager.load("data/background/mid_f.png",Texture.class, "Mid F");
@@ -354,19 +372,44 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	aManager.load("data/laser.png",Texture.class, "Platform Spawn");
    	
    	aManager.load("data/player/actual_sprite_sheet.png",Texture.class, "Kiku");
+   	aManager.load("data/player/Jump_Sprite_Sheet.png",Texture.class, "Kiku_Jump");
+
    	
    	aManager.load("data/background.png", Texture.class, "VS Back");
    	aManager.load("data/wind.png", Texture.class, "VS Swoosh");
 
+   	/*
    	
+  	aManager.loadTexture("data/2_Tile.png",  "Platform_Generic");
+   	aManager.loadTexture("data/eye_sprite_sheet.png",  "Enemy");
+  	aManager.loadTexture("data/background/back_clouds.png", "Back Clouds");
+   	aManager.loadTexture("data/background/front_clouds.png",  "Front Clouds");
+   	aManager.loadTexture("data/background/front_f.png", "Front F");
+   	aManager.loadTexture("data/background/mid_f.png", "Mid F");
+   	aManager.loadTexture("data/background/back_f.png","Back F");
+   	aManager.loadTexture("data/background/sky.png","Sky");
+   	aManager.loadTexture("data/front_stars.png", "Front Stars");
+   	aManager.loadTexture("data/laser.png", "Platform Spawn");
+   	
+   	aManager.loadTexture("data/player/actual_sprite_sheet.png", "Kiku");
+   	aManager.loadTexture("data/player/Jump_Sprite_Sheet.png", "Kiku_Jump");
 
    	
-   	while(!aManager.update()) {};	
+   	aManager.loadTexture("data/background.png",  "VS Back");
+   	aManager.loadTexture("data/wind.png", "VS Swoosh");
+*/
    	
-		
+   	while(!aManager.update()) {};	
+   	aManager.finishLoading();
+   	//aManager.update();
+	
+   //Gdx.app.log("AssetManager", "ENEMY TEXTURE GET GET" + aManager.get(aManager.getPath("Enemy"), Texture.class).getWidth() + " <<<<");
+   	//aManager.bindTextures();
+   	
+   	Gdx.app.log("AssetManager", "BAM!! " + aManager.getDiagnostics());
 		loaded = true;
 	}
-	
+   	
 	
 	
 	public void hitMonster(Monster j) {
@@ -379,11 +422,14 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 			
 			
 			gameManager.setScreen(new VersusScreen(gameManager, this, abcdDialogue));
+			lastHit = j;
 			
 		}
 		
 		
 	}
+	
+	Monster lastHit;
 	
 	
 	public void answerSelected(QROptions given, QROptions correct, boolean isRight) {
@@ -391,10 +437,16 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		if(isRight) {
 			setGameState(GameState.running);
 			abcdDialogue.setQRBlock(leDataHandler.getRandomBlock());
+			
+			speedBonus += 0.5f;
+			
+			lastHit.removePhysics();
+			lastHit.remove();
 		}
 		else {
 			
-			//setGameState(GameState.running);
+			setGameState(GameState.running);
+			speedBonus = 2.0f;
 		}
 	}
 	
@@ -413,6 +465,11 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 
 	@Override
 	public void resume() {
+
+		loaded = false;
+   	
+		
+		//loaded = true;
 		
 	}
 
@@ -421,7 +478,8 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		//batch.dispose();
         stage.dispose();
         
-       	AssetManager aManager = GameManager.getAssetsManager();
+        /*
+       	LAssetManager aManager = GameManager.getAssetsManager();
         
     	aManager.unload("data/2_Tile.png");
        	aManager.unload("data/big_pixel_coin.png");
@@ -433,6 +491,10 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
        	aManager.unload("data/background/sky.png");
        	aManager.unload("data/front_stars.png");
        	aManager.unload("data/laser.png");
+       	
+       	//aManager.clear();
+       	 * */
+    
 
 	}
 	

@@ -1,3 +1,4 @@
+
 package com.omg.drawing;
 
 import com.badlogic.gdx.Gdx;
@@ -44,6 +45,23 @@ public class JSAnimation {
 	
 	Timer animationTimer;
 	
+	boolean repeat = true;
+	boolean isFinished = false;
+	
+	public boolean isRepeat() {
+		return repeat;
+	}
+	public void setRepeat(boolean value) {
+		repeat = value;
+	}
+	
+	public boolean isFinished() {
+		return isFinished;
+	}
+	public void setFinished(boolean value) {
+		this.isFinished = value;
+	}
+	
 	
 	public JSAnimation(String name, Texture t, int width, int height, int frames, int speed) {
 		this.texture = t;
@@ -56,6 +74,8 @@ public class JSAnimation {
 		
 		this.speed = speed;
 		
+		this.name = name;
+		
 		region.setRegion(startX, startY, width, height);
 		
 		animationTimer = new Timer();
@@ -67,13 +87,20 @@ public class JSAnimation {
 	public TextureRegion update(float delta) {
 		if(animationTimer.getTime() > speed) {
 			
+			
 			X += width;
 			currentFrame++;
 			
 			if(currentFrame >= frameCount)
 			{
-				X = startX;
-				currentFrame = 0;
+				if(isRepeat()) {
+					reset();
+				} else {
+					setFinished(true);
+					return null;
+				}
+				
+				
 			}
 			
 			region.setRegion(X, Y, width, height);
@@ -93,7 +120,12 @@ public class JSAnimation {
 	}
 	
 	
-	
+	public void reset() {
+		
+		X = startX;
+		currentFrame = 0;
+	}
+
 	
 	
 	
