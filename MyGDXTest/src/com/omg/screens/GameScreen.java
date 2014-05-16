@@ -259,6 +259,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		stage = new Stage(w,h,true);
 	        Gdx.input.setInputProcessor(stage);
 	        stage.setCamera(camera);
+	  	  
+	        debugRenderer.setDrawBodies(false);
+
 	        
 	       
 	 		//stage.setKeyboardFocus(player);

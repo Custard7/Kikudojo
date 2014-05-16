@@ -1,6 +1,7 @@
 package com.omg.ssplayer.mechanics;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -32,16 +33,23 @@ public class KiOrb extends JSActor {
 	public KiOrb() {
 		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Orb_B"),0,0,c_width,c_height));
 
-		this.setColor(getColor().r - 0.5f, getColor().g - 0.1f, getColor().b + 0.5f, getColor().a);
+		//this.setColor(getColor().r - 0.5f, getColor().g + 0.1f, getColor().b + 0.5f, getColor().a);
 		
 		aura = new JSActor(new TextureRegion(GameManager.getAssetsManager().getTexture("Aura_B"),0,0,c_width*2,c_height*2));
 		aura.setX(-c_width/2);
 		aura.setY(-c_height/2);
 		
 		aura.addAction(Actions.forever(Actions.sequence( Actions.alpha(0, 1), Actions.alpha(1.0f, .5f))));
-		
+		//aura.setColor(getColor().r, getColor().g, getColor().b, getColor().a);
+
 		this.addActor(aura);
 		addTag("KiOrb");
+	}
+	
+	@Override
+	public void setColor(Color color) {
+		super.setColor(color);
+		aura.setColor(color);
 	}
 	
 	
