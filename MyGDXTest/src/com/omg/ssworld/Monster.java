@@ -35,8 +35,8 @@ public class Monster extends JSActor {
 		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Enemy"),0,0,c_width,c_height));
 
 		
-		Gdx.app.log("MONSTER", "ENEMY TEXTURE GET : " + GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class).getTextureObjectHandle() + " <<<<");
-		Gdx.app.log("MONSTER", "ENEMY TEXTURE GET : " + GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Kiku"), Texture.class).getTextureObjectHandle() + " <<<<");
+		//Gdx.app.log("MONSTER", "ENEMY TEXTURE GET : " + GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class).getTextureObjectHandle() + " <<<<");
+		//Gdx.app.log("MONSTER", "ENEMY TEXTURE GET : " + GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Kiku"), Texture.class).getTextureObjectHandle() + " <<<<");
 
 		//idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class), c_width, c_height, 10, 100);		
 		idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().getTexture("Enemy"), c_width, c_height, 10, 100);		

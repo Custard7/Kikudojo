@@ -31,6 +31,7 @@ import com.omg.sfx.MusicManager;
 import com.omg.sfx.SoundManager;
 import com.omg.spriter.TextureProvider;
 import com.omg.ssplayer.Kiku;
+import com.omg.ssplayer.mechanics.KiOrb;
 import com.omg.sswindler.GameManager;
 import com.omg.ssworld.CollisionHandler;
 import com.omg.ssworld.Monster;
@@ -280,6 +281,10 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		player.addPhysics(physics_world);
 	  		BASENODE.addActor(player);
 	  		
+	  		//KiOrb orb = new KiOrb();
+	  		//orb.setTarget(player);
+	  		//BASENODE.addActor(orb);
+	  		
 	  		//knight = new JSSpriter("data/hero/BetaFormatHero.SCML",this);
 	  		//BASENODE.addActor(knight);
 	
@@ -377,6 +382,11 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	
    	aManager.load("data/background.png", Texture.class, "VS Back");
    	aManager.load("data/wind.png", Texture.class, "VS Swoosh");
+   	
+   	aManager.loadTexture("data/effects/blue_aura_small.png", "Aura_B");
+   	aManager.loadTexture("data/effects/blue_orb_small.png", "Orb_B");
+   	aManager.loadTexture("data/effects/blue_aura_kiku.png", "PlayerAura");
+
 
    	/*
    	
@@ -438,15 +448,20 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 			setGameState(GameState.running);
 			abcdDialogue.setQRBlock(leDataHandler.getRandomBlock());
 			
-			speedBonus += 0.5f;
+			speedBonus += 0.25f;
+			player.collectKi();
 			
 			lastHit.removePhysics();
 			lastHit.remove();
 		}
 		else {
 			
+			player.removeKi();
+			
 			setGameState(GameState.running);
-			speedBonus = 2.0f;
+			speedBonus *= 0.5f;
+			if(speedBonus < 2)
+				speedBonus = 2;
 		}
 	}
 	
