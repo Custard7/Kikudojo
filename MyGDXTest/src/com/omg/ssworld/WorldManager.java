@@ -81,7 +81,11 @@ public class WorldManager extends JSActor {
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Back F", -10, -200))); 		//Mountain Back
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front Clouds", 0, 300))); 		//Clouds Foreground
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Mid F", 1, -250))); 			//Grass Middle
-		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front F", 4, -400))); 			//Grass Front
+		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("River", 10, -1200))); 			//River
+		 
+		 
+		 BackgroundSpawn fore =  new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front F", 4, -400));
+		 addBackgroundSpawn(fore); 			//Grass Front
 
 		 
 	}
@@ -144,7 +148,7 @@ public class WorldManager extends JSActor {
     		totalPlayTime.reset();
 		}
 		
-		
+		Gdx.app.log("WORLD","CHILDREN: " + this.getChildren().size);
 		
 	}
 	
@@ -212,7 +216,7 @@ public class WorldManager extends JSActor {
 	private float last_y = 0;
 	private Platform lastPlatform;
 	
-	public void addPlatform(Platform p) {
+	/*public void addPlatform(Platform p) {
 		
 		
 		int ranNum = (int)(Math.random() * 100);
@@ -237,7 +241,7 @@ public class WorldManager extends JSActor {
 		if(!(ranNum >= 70))
 		addActor(p);
 		lastPlatform = p;
-	}
+	}*/
 	
 	
 	Platform lastPlatformX = null;
@@ -290,12 +294,13 @@ public class WorldManager extends JSActor {
 		s.setY(ran_y);
 		s.setX(ran_x);
 		
+		//s.setZIndex(1000);
 		addActor(s);
 		
 		
 	}
 	
-	public void addBackground(Background b, boolean reuse) {
+	/*public void addBackground(Background b, boolean reuse) {
 		
 		b.setWorldBounds(x, y, width, height);
 
@@ -306,7 +311,7 @@ public class WorldManager extends JSActor {
 		if(!reuse)
 			addActor(b);
 		
-	}
+	}*/
 	
 	
 	private float oldSpeed = 25;

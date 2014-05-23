@@ -104,7 +104,7 @@ public class PlatformSpawn extends JSActor {
 			if(currentLength == length) {
 				Monster monster = new Monster();				
 				//addMonster(monster, this.getY() + 100);
-				worldManager.addMonster(monster, last_y + 800); //150
+				worldManager.addMonster(monster, last_y + 1250); //150
 
 				//this.remove();
 				this.turnOff();
@@ -193,7 +193,7 @@ public class PlatformSpawn extends JSActor {
 	public void turnOff() {
 		isOn = false;
 		//last_y = (float)(Math.random() * (worldManager.getWorldHeight()/2));
-		last_y = (float)(Math.random() * (worldManager.getWorldHeight()/2) - 600);
+		last_y = (float)(Math.random() * (worldManager.getWorldHeight()/2) - 1000);
 		lastPlatform = null;
 		
 	}

@@ -405,6 +405,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	aManager.loadTexture("data/effects/explosion.png", "Explosion");
 
    	aManager.loadTexture("data/environment/platforms/le_platform.png", "Platform_Le");
+   	aManager.loadTexture("data/background/river.png", "River");
 
 
 

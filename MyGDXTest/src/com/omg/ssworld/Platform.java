@@ -24,7 +24,7 @@ public class Platform extends JSActor {
 	Body body;
 	
 	protected static int c_width = 512;
-	protected static int c_height = 600; //128
+	protected static int c_height = 1080; //128
 	
 	
 	public boolean isActive;
@@ -141,7 +141,7 @@ private void createBody(World physics_world) {
 
 		// Create a circle shape and set its radius to 6
 		PolygonShape rectangle = new PolygonShape();
-		rectangle.setAsBox(c_width/2.0f, c_height/40.0f); //8
+		rectangle.setAsBox(c_width/2.0f, c_height/70.0f); //8
 
 		// Create a fixture definition to apply our shape to
 		FixtureDef fixtureDef = new FixtureDef();
