@@ -6,18 +6,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.omg.drawing.JSActor;
+import com.omg.drawing.JSAnimatedActor;
+import com.omg.drawing.JSAnimation;
 import com.omg.drawing.JSFont;
 import com.omg.events.DialogueListener;
 import com.omg.filemanagement.QRSet.QROptions;
 import com.omg.gui.ABCDDialogue;
 import com.omg.gui.VersusDialogue;
-import com.omg.screens.GameScreen.GameState;
 import com.omg.sfx.MusicManager;
 import com.omg.sfx.SoundManager;
 import com.omg.spriter.TextureProvider;
@@ -27,30 +32,97 @@ public class VersusScreen implements Screen, TextureProvider {
 
 	GameManager gameManager;
 	
-	 MusicManager musicManager;
-	 SoundManager soundManager;
+	MusicManager musicManager;
+	SoundManager soundManager;
 	 
-	 private Stage stage;
-	 JSActor BASENODE;
+	private Stage stage;
+	JSActor BASENODE;
 	 
-	 JSFont menuText;
-	 JSFont touchToContinueText;
+	JSFont touchToContinueText;
 
-	 HashMap<String, Texture> textures;
+	HashMap<String, Texture> textures;
 
-	 GameScreen previousScreen;
+	GameScreen previousScreen;
 	 
-	 ABCDDialogue dialogue;
+	ABCDDialogue dialogue;
 
-	 VersusDialogue vsDialogue;
+	VersusDialogue vsDialogue;
 	 
+	JSActor battleBASE;
+	
+	JSActor battleBackground;
+
+	
+	JSActor battleBottom;
+	
+	JSActor battleBottomBack;
+	
+	JSFont a1Text;
+	JSFont a2Text;
+	JSFont a3Text;
+	
+	JSActor battleScene;	
+	JSAnimatedActor battleEnemy;
+	JSAnimatedActor battleKiku;
+	
+	 
+	public enum VSScreenState {
+		 
+		Opening,
+		Battling,
+		Finishing
+		 
+	}
+	 
+	VSScreenState currentState = VSScreenState.Opening;
+	 
+	public void setState(VSScreenState state) {
+		
+		if(state == VSScreenState.Battling && currentState != VSScreenState.Battling) {
+			updateAnswerText();
+			animateBattleTransition();
+		}
+		
+		currentState  = state;
+	}
+	
+	public void updateAnswerText() {
+		a1Text.setText("A: " + dialogue.getQRBlock().getA());
+		a2Text.setText("B: " + dialogue.getQRBlock().getB());
+		a3Text.setText("C: " + dialogue.getQRBlock().getC());
+
+	}
+	
+	public void animateBattleTransition() {
+		
+		//battleBottom;
+		//dialogue;
+		
+  		//battleBottom.setPosition(-300, -350);
+  		battleBottom.setPosition(-300, -610);
+  		dialogue.setPosition(1055, -200);
+
+  		battleBottom.setColor(Color.CLEAR);
+  		battleBackground.setColor(Color.CLEAR);
+  		
+  		battleBottom.addAction(Actions.parallel(Actions.moveTo(-300, -350, 1.5f, Interpolation.bounceOut), Actions.color(Color.WHITE, 2)));
+  		dialogue.addAction(Actions.parallel(Actions.moveTo(855, -200, 1.5f, Interpolation.bounceOut), Actions.color(Color.WHITE, 2)));
+  		
+  		
+  		battleEnemy.addAction(Actions.forever(Actions.sequence(Actions.moveBy(-20, 0, 1, Interpolation.sineOut), Actions.moveBy(20, 0, 1.1f, Interpolation.sineIn))));
+  		battleKiku.addAction(Actions.forever(Actions.sequence(Actions.moveBy(-20, 0, 1, Interpolation.sineOut), Actions.moveBy(20, 0, 1.1f, Interpolation.sineIn))));
+
+  		
+  		battleBackground.addAction(Actions.parallel(Actions.color(Color.WHITE, 1)));
+	}
 	 
     // constructor to keep a reference to the main Game class
-     public VersusScreen(GameManager gameManager, GameScreen previousScreen, ABCDDialogue d){
+    public VersusScreen(GameManager gameManager, GameScreen previousScreen, ABCDDialogue d){
              this.gameManager = gameManager;
              
              this.previousScreen = previousScreen;
              this.dialogue = d;
+             dialogue.setVisible(false);
              
              dialogue.setListener(new DialogueListener() {
             		
@@ -67,6 +139,11 @@ public class VersusScreen implements Screen, TextureProvider {
  				}
  	  			
  	  		});
+             
+             
+             
+             
+             
      }
 	
      
@@ -94,6 +171,43 @@ public class VersusScreen implements Screen, TextureProvider {
 	        stage.act(Gdx.graphics.getDeltaTime());
 	        stage.draw();
 	        
+	        
+	        
+	    switch(currentState) {
+	    
+	    case Opening:
+	    	
+	    	dialogue.setVisible(false);
+	    	battleBASE.setVisible(false);
+	    	vsDialogue.setVisible(true);
+	    	vsDialogue.updateFromVersus();
+	    	
+	    	if(vsDialogue.isDone()) {
+	    		setState(VSScreenState.Battling);
+	    	}
+	    	
+	    	break;
+	    case Battling:
+	    	
+	    	dialogue.setVisible(true);
+	    	vsDialogue.setVisible(false);
+	    	battleBASE.setVisible(true);
+	    	
+	    	break;
+	    case Finishing:
+	    	
+	    	dialogue.setVisible(false);
+	    	vsDialogue.setVisible(false);
+
+	    	
+	    	break;
+	    default:
+	    	
+	    	break;
+	    	
+	    
+	    
+	    }
 	        
 	        
 	
@@ -135,19 +249,69 @@ public class VersusScreen implements Screen, TextureProvider {
   		
   		BASENODE.setPosition(-300, 200);
   		
-  		menuText = new JSFont("VS");
-  		menuText.setPosition(275,0);
-  		BASENODE.addActor(menuText);
+
   		
   		touchToContinueText = new JSFont("Fight!");
   		touchToContinueText.setPosition(50,-150);
   		//BASENODE.addActor(touchToContinueText);
   		
-  		dialogue.setVisible(true);
-  		dialogue.setPosition(300, -200);
+  		
+  		//BATTLE SCREEN BASE
+  		battleBASE = new JSActor();
+  		battleBASE.setVisible(false);
+  		BASENODE.addActor(battleBASE);
+  		
+  		battleBackground = new JSActor(new TextureRegion(GameManager.getAssetsManager().getTexture("Battle Back"),0,0,1280,720));
+  		battleBackground.setPosition(-340, -560);
+  		battleBASE.addActor(battleBackground);
+  		
+  		
+  		//BATTLE SCENE
+  		battleScene = new JSActor();
+  		battleBASE.addActor(battleScene);
+  		
+  		JSAnimation enemyAnimation = new JSAnimation("LookingEvil", GameManager.getAssetsManager().getTexture("Enemy_Eye_Front"), 300, 200, 10, 100);
+  		battleEnemy = new JSAnimatedActor(enemyAnimation);
+  		battleEnemy.setPosition(125,-250);
+  		battleEnemy.setScale(2);
+  		battleScene.addActor(battleEnemy);
+  		
+  		
+  		
+  		//BATTLE BOTTOM TEXT
+  		battleBottom = new JSActor();
+  		battleBottom.setPosition(-300, -350);
+  		battleBASE.addActor(battleBottom);
+  		
+  		battleBottomBack = new JSActor(new TextureRegion(GameManager.getAssetsManager().getTexture("QBox"),0,0,1280,250));
+  		battleBottomBack.setPosition(-30, -200);
+  		battleBottom.addActor(battleBottomBack);
+
+  		a1Text = new JSFont("A: ");
+  		a1Text.setPosition(10, 0);
+        
+  		a2Text = new JSFont("B: ");
+  		a2Text.setPosition(10, -50);
+
+        a3Text = new JSFont("C: ");
+  		a3Text.setPosition(10, -100);
+
+        
+  		battleBottom.addActor(a1Text);
+  		battleBottom.addActor(a2Text);
+  		battleBottom.addActor(a3Text);
+  		
+  		
+	   	JSAnimation kikuAnimation = new JSAnimation("Jumping", GameManager.getAssetsManager().getTexture("Kiku_Jump"), 200, 200, 10, 200);
+  		battleKiku = new JSAnimatedActor(kikuAnimation);
+  		battleKiku.setPosition(-250,-350);
+  		battleKiku.setScale(2);
+  		battleScene.addActor(battleKiku);
+  		
+  		//BUTTONS
+  		dialogue.setVisible(false);
+  		dialogue.setPosition(855, -200);
   		BASENODE.addActor(dialogue);
-  		
-  		
 
   		
   		

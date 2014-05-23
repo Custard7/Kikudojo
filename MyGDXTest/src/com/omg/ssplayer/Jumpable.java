@@ -41,6 +41,8 @@ public class Jumpable extends JSActor {
 	
 	Timer isInAirTimer;
 	
+	int groundCounts = 0;
+	
 	public Jumpable()
 	{
 		super(new TextureRegion(new Texture(Gdx.files.internal("data/ship_blue.png")),0,0,256,256));
@@ -53,8 +55,8 @@ public class Jumpable extends JSActor {
 		
 		movement = new JSMovementProperties();
 		movement.setFriction(0.98f);
-		movement.setMaxVelocity(-100, 100);
-		movement.setMaxAcceleration(-100, 100);
+		movement.setMaxVelocity(-50, 100);
+		movement.setMaxAcceleration(-60, 100);
 		
 		isInAirTimer = new Timer();
 		//isInAirTimer.start();
@@ -74,11 +76,12 @@ public class Jumpable extends JSActor {
 		 if(!frozen)
 		 {
 		 
-		 if(isInAirTimer.getTime() > 14000 * Gdx.graphics.getDeltaTime() && jumpState == JumpableState.onGround && fellFromPlatform)
+			 //14000
+		 if(isInAirTimer.getTime() > 1000 * Gdx.graphics.getDeltaTime() && jumpState == JumpableState.onGround && fellFromPlatform)
 		 {
 			jumpState = JumpableState.inAir;
 			canJump = true;
-			
+		
 		 }
 		 
 
@@ -89,7 +92,7 @@ public class Jumpable extends JSActor {
 			case inAir:
 				accelerateY(-gravity/8);
 				if(!(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched()))
-					accelerateY(-gravity * 2);
+					accelerateY(-gravity * 2 );
 
 				break;
 			default:
@@ -148,7 +151,9 @@ public class Jumpable extends JSActor {
 				
 		}
 		
+		fellFromPlatform = false;
 	}
+	
 	
 	public void hitGround() {
 		
@@ -157,7 +162,14 @@ public class Jumpable extends JSActor {
 		jumpedFromGround = false;
 		isInAirTimer.reset();
 		fellFromPlatform = false;
-		
+
+	}
+	
+	public void hitGround(boolean count) {
+		hitGround();
+		groundCounts++;
+		Gdx.app.log("KIKU", "----HITTING GROUND----- Counts: " + groundCounts);
+
 	}
 	
 	boolean fellFromPlatform = false;
@@ -165,9 +177,16 @@ public class Jumpable extends JSActor {
 	public void inAir() {
 		//jumpState = JumpableState.inAir;
 		//canJump = true;
-		isInAirTimer.reset();
-		isInAirTimer.start();
-		fellFromPlatform = true;
+		
+		
+		
+		groundCounts--;
+		
+		if(groundCounts < 1) {
+			isInAirTimer.reset();
+			isInAirTimer.start();
+			fellFromPlatform = true;
+		}
 	}
 	
 	

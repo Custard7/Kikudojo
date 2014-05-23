@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -39,11 +40,15 @@ public class ABCDDialogue extends Table {
 	
 	DialogueListener listener;
 	
-	QRBlock qrBlock;
+	public QRBlock qrBlock;
 	
 	TextButton A;
 	TextButton B;
 	TextButton C;
+	
+
+
+	
 	
 
 	public QROptions getAnswer()
@@ -60,23 +65,69 @@ public class ABCDDialogue extends Table {
 		setFillParent(true);
 		
 		
+		buttonFont = JSFont.loadFont("ktegaki");
+
+		
 		Skin skin = new Skin();
 		skin.add("up", new Texture("data/ui/button_up.png"));
 		skin.add("down", new Texture("data/ui/button_down.png"));
-
-
 		
+		
+		
+		Skin skinA = new Skin();
+		skinA.add("up", new Texture("data/ui/a_button.png"));
+		skinA.add("down", new Texture("data/ui/a_button_down.png"));
+		
+		TextureRegion upRegionA = skinA.getRegion("up");
+		TextureRegion downRegionA = skinA.getRegion("down");
+
+		TextButtonStyle styleA = new TextButtonStyle();
+		styleA.up = new TextureRegionDrawable(upRegionA);
+		styleA.down = new TextureRegionDrawable(downRegionA);
+		styleA.font = buttonFont;
+		
+		
+		
+		
+		Skin skinB = new Skin();
+		skinB.add("up", new Texture("data/ui/b_button.png"));
+		skinB.add("down", new Texture("data/ui/b_button_down.png"));
+		
+		TextureRegion upRegionB = skinB.getRegion("up");
+		TextureRegion downRegionB = skinB.getRegion("down");
+
+		TextButtonStyle styleB = new TextButtonStyle();
+		styleB.up = new TextureRegionDrawable(upRegionB);
+		styleB.down = new TextureRegionDrawable(downRegionB);
+		styleB.font = buttonFont;
+		
+		
+		
+		Skin skinC = new Skin();
+		skinC.add("up", new Texture("data/ui/c_button.png"));
+		skinC.add("down", new Texture("data/ui/c_button_down.png"));
+
+		TextureRegion upRegionC = skinC.getRegion("up");
+		TextureRegion downRegionC = skinC.getRegion("down");
+
+		TextButtonStyle styleC = new TextButtonStyle();
+		styleC.up = new TextureRegionDrawable(upRegionC);
+		styleC.down = new TextureRegionDrawable(downRegionC);
+		styleC.font = buttonFont;
+		
+
 		upRegion = skin.getRegion("up");
 		downRegion = skin.getRegion("down");
 		//buttonFont = JSFont.loadFont("arialblack");
-		buttonFont = JSFont.loadFont("ktegaki");
+		
+		
 
 		TextButtonStyle style = new TextButtonStyle();
 		style.up = new TextureRegionDrawable(upRegion);
 		style.down = new TextureRegionDrawable(downRegion);
 		style.font = buttonFont;
 
-		A = new TextButton("A: ", style);
+		A = new TextButton("", styleA);
 		A.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				//System.out.println("Changed!");
@@ -87,11 +138,11 @@ public class ABCDDialogue extends Table {
 
 			}
 		});
-		A.align(Align.left);
+		A.align(Align.right);
 		add(A);
 		row();
 		
-		B = new TextButton("B: ", style);
+		B = new TextButton("", styleB);
 		B.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				//System.out.println("Changed!");
@@ -101,11 +152,11 @@ public class ABCDDialogue extends Table {
 				randomizeAnswer();
 			}
 		});
-		B.align(Align.left);
+		B.align(Align.right);
 		add(B);
 		row();
 		
-		C = new TextButton("C: ", style);
+		C = new TextButton("", styleC);
 		C.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
 				//System.out.println("Changed!");
@@ -116,7 +167,7 @@ public class ABCDDialogue extends Table {
 
 			}
 		});
-		C.align(Align.left);
+		C.align(Align.right);
 		add(C);
 		row();
 		
@@ -182,9 +233,9 @@ public class ABCDDialogue extends Table {
 	public void setQRBlock(QRBlock block) {
 		this.qrBlock = block;
 		
-		A.setText("A: " + qrBlock.getA());
-		B.setText("B: " + qrBlock.getB());
-		C.setText("C: " + qrBlock.getC());
+		//A.setText("A: " + qrBlock.getA());
+		//B.setText("B: " + qrBlock.getB());
+		//C.setText("C: " + qrBlock.getC());
 		
 		
 		//this.setScale(1.5f);

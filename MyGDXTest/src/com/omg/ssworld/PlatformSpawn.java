@@ -61,19 +61,25 @@ public class PlatformSpawn extends JSActor {
 		if(!isOn)
 			return;
 		
-		//15000
-		if(timer.getTime()  > (30000.0f / (((float)worldManager.speed)/10.0f) * Gdx.graphics.getDeltaTime())){
+		//30000
+		if(timer.getTime()  > (54000.0f / (((float)worldManager.speed)/10.0f) * Gdx.graphics.getDeltaTime())){
 			boolean canReuse = false;
 			Platform p = null;
 			
-			for(Actor a : this.getChildren()) {
-				
-				if(((JSActor)a).hasTag("Platform")) {
+			//Gdx.app.log("P", "CREATING PLATFORM BABY :) :) SIZE: " + worldManager.getChildren().size);
 			
+			for(Actor a : worldManager.getChildren()) {
+
+				if(((JSActor)a).hasTag("Platform")) {
+
 					if(!((Platform)a).isActive) {
+
 						((Platform)a).isActive = true;
 						p = ((Platform)a);
 						canReuse = true;
+						//Gdx.app.log("P", "REUSING PLATFORM :) :)");
+
+
 					}
 				}
 			}
@@ -82,28 +88,47 @@ public class PlatformSpawn extends JSActor {
 				p = new Platform();
 				if(this.getY() > 700)
 					p = new CeilingPlatform();
+				
+				//Gdx.app.log("P", "CREATING NEW PLATFORM >:( >:(");
+
 			}
-			worldManager.addPlatform(p, last_y);
+			
+			currentLength++;
+			timer.reset();
+
+
+			
+			worldManager.addPlatform(p, last_y, this);
 			//addPlatform(p, last_y, canReuse);
 
-			timer.reset();
-			currentLength++;
 			if(currentLength == length) {
 				Monster monster = new Monster();				
 				//addMonster(monster, this.getY() + 100);
-				worldManager.addMonster(monster, last_y + 150);
+				worldManager.addMonster(monster, last_y + 800); //150
 
 				//this.remove();
 				this.turnOff();
+				unchain();
+			} else {
+				chain();
 			}
 		}
 		
 	}
 	
-
+	boolean samePlatformChain = true;
 	
+	public boolean shouldChain() {
+		
+		return samePlatformChain;
+	}
 	
-	
+	public void unchain() {
+		samePlatformChain = false;
+	}
+	public void chain() {
+		samePlatformChain = true;
+	}
 	
 	private float last_y = 0;
 	private Platform lastPlatform;
@@ -145,8 +170,10 @@ public class PlatformSpawn extends JSActor {
 			p.setX(lastPlatform.getX() + lastPlatform.getTextureWidth());
 		p.addPhysics(physics_world);
 		p.setY(yPos);
-		if(!canReuse)
+		if(!canReuse) {
 			addActor(p);
+
+		} 
 		lastPlatform = p;
 		
 	}
@@ -165,7 +192,8 @@ public class PlatformSpawn extends JSActor {
 	
 	public void turnOff() {
 		isOn = false;
-		last_y = (float)(Math.random() * (worldManager.getWorldHeight()/2));
+		//last_y = (float)(Math.random() * (worldManager.getWorldHeight()/2));
+		last_y = (float)(Math.random() * (worldManager.getWorldHeight()/2) - 600);
 		lastPlatform = null;
 		
 	}

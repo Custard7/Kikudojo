@@ -47,7 +47,9 @@ public class CollisionHandler implements ContactListener {
 	    if(j.hasTag("Platform") && s.hasTag("Jumpable"))
 	    {
 	    	
-    		((Jumpable)s).hitGround();
+    		((Jumpable)s).hitGround(true);
+    		
+    		Gdx.app.log("KIKU","HitGround");
 
 	    	/*if(j.hasTag("Ceiling"))
 	    	{
@@ -100,6 +102,8 @@ public class CollisionHandler implements ContactListener {
 	    {
 	    	((Jumpable)s).inAir();
 		    //Gdx.app.log(TAG, "Collision b/w Jumpable and Platform");
+    		Gdx.app.log("KIKU","FELL OFF ");
+
 	    	
 	    }
 	}

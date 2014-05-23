@@ -62,6 +62,10 @@ public class JSAnimation {
 		this.isFinished = value;
 	}
 	
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+	
 	
 	public JSAnimation(String name, Texture t, int width, int height, int frames, int speed) {
 		this.texture = t;
@@ -124,6 +128,7 @@ public class JSAnimation {
 		
 		X = startX;
 		currentFrame = 0;
+		setFinished(false);
 	}
 
 	

@@ -77,7 +77,7 @@ public class WorldManager extends JSActor {
 		 */
 		 
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Sky", 0, 0))); 				//Sky Back
-		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Back Clouds", -15, -100))); 	//Clouds Back
+		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Back Clouds", -7, -100))); 	//Clouds Back 15
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Back F", -10, -200))); 		//Mountain Back
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front Clouds", 0, 300))); 		//Clouds Foreground
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Mid F", 1, -250))); 			//Grass Middle
@@ -157,7 +157,8 @@ public class WorldManager extends JSActor {
 			worldTimer.reset();
 		}*/
 		
-		if(worldTimer.getTime()  > 120000 * Gdx.graphics.getDeltaTime()){
+		//120000
+		if(worldTimer.getTime()  > 200000 * Gdx.graphics.getDeltaTime()){
 			//PlatformSpawn p = new PlatformSpawn(this, physics_world,(int) ((Math.random() * 8) + 4));
 			//addPlatformSpawn(p);
 			
@@ -239,13 +240,25 @@ public class WorldManager extends JSActor {
 	}
 	
 	
-	public void addPlatform(Platform p, float yPos) {
+	Platform lastPlatformX = null;
+	boolean samePlatformChain = false;
+	
+
+	
+	public void addPlatform(Platform p, float yPos, PlatformSpawn spawn) {
 		
 		p.setWorldBounds(x, y, width, height);
-		p.setX(x + width);
+		if(spawn.shouldChain() && lastPlatformX != null) {
+			p.setX(lastPlatformX.getX() + lastPlatformX.getWidth());
+		} else {
+			p.setX(x + width);
+		}
 		p.addPhysics(physics_world);
 		p.setY(yPos);
 		addActor(p);
+		
+		
+		lastPlatformX = p;
 		
 	}
 	

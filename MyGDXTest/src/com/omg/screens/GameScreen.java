@@ -369,7 +369,11 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	aManager.clear();
 
    	aManager.load("data/2_Tile.png", Texture.class, "Platform_Generic");
-   	aManager.load("data/eye_sprite_sheet.png",Texture.class, "Enemy");
+   	aManager.load("data/enemies/eye/eye_sprite_sheet.png",Texture.class, "Enemy");
+   	aManager.load("data/enemies/eye/eye_guy_front.png",Texture.class, "Enemy_Eye_Front");
+   	
+
+   	
   	aManager.load("data/background/back_clouds.png",Texture.class, "Back Clouds");
    	aManager.load("data/background/front_clouds.png",Texture.class, "Front Clouds");
    	aManager.load("data/background/front_f.png",Texture.class, "Front F");
@@ -385,10 +389,24 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	
    	aManager.load("data/background.png", Texture.class, "VS Back");
    	aManager.load("data/wind.png", Texture.class, "VS Swoosh");
+   	aManager.loadTexture("data/ui/VS.png", "VS VS");
+   	aManager.loadTexture("data/background_border.png", "VS Back Border");
+
+   	aManager.loadTexture("data/ui/Question Box.png", "QBox");
+   	aManager.loadTexture("data/background/battle/bg2.png", "Battle Back");
+
+
    	
    	aManager.loadTexture("data/effects/blue_aura_small.png", "Aura_B");
    	aManager.loadTexture("data/effects/blue_orb_small.png", "Orb_B");
    	aManager.loadTexture("data/effects/blue_aura_kiku.png", "PlayerAura");
+   	
+   	aManager.loadTexture("data/effects/white flash.png", "White");
+   	aManager.loadTexture("data/effects/explosion.png", "Explosion");
+
+   	aManager.loadTexture("data/environment/platforms/le_platform.png", "Platform_Le");
+
+
 
 
    	/*
