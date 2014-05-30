@@ -44,6 +44,7 @@ public class KiOrb extends JSActor {
 
 		this.addActor(aura);
 		addTag("KiOrb");
+		addTag("STATIC");
 	}
 	
 	@Override

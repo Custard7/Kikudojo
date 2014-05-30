@@ -25,6 +25,8 @@ public class BackgroundSpawn extends JSActor {
 	boolean useReflection = false;
 	BProperties bProperties;
 	
+	boolean freezeWorldStopsEverything = false;
+	
 	public BackgroundSpawn(WorldManager manager, String backgroundClassPath){
 		//super(new TextureRegion(GameManager.getAssetsManager().get("data/laser.png", Texture.class),0,0,32,64));
 		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Laser"),0,0,32,64));
@@ -44,7 +46,8 @@ public class BackgroundSpawn extends JSActor {
 	}
 	
 	public BackgroundSpawn(WorldManager manager, BProperties p) {
-		super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath(p.getFileName()), Texture.class),0,0,p.getWidth(),p.getHeight()));
+		super(new TextureRegion(GameManager.getAssetsManager().getTexture((p.getFileName())),0,0,p.getWidth(),p.getHeight()));
+		//super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath(p.getFileName()), Texture.class),0,0,p.getWidth(),p.getHeight()));
 		//super(new TextureRegion(GameManager.getAssetsManager().getTexture(p.getFileName()),0,0,p.getWidth(),p.getHeight()));
 
 		init(manager);
@@ -75,17 +78,23 @@ public class BackgroundSpawn extends JSActor {
 		if(this.getChildren().size <= 3)
 			speed = 1000;
 		
-		for(Actor a : this.getChildren()) {
-			
-			if(!((JSActor)a).hasTag("STATIC")) {
-			
-				int customSpeed = 0;
+		if(!(freezeWorldStopsEverything && worldManager.getState() == WorldState.frozen)) {
+		
+			for(Actor a : this.getChildren()) {
 				
-				if(((JSActor)a).hasTag("Background"))
-					customSpeed = ((Background)a).getCustomSpeed();
-				else if(worldManager.getState() == WorldState.frozen)
-					break;
-				a.translate(-(speed + customSpeed), 0);
+				if(!((JSActor)a).hasTag("STATIC")) {
+				
+					int customSpeed = 0;
+					
+					if(((JSActor)a).hasTag("Background"))
+						customSpeed = ((Background)a).getCustomSpeed();
+	
+					if(speed + customSpeed >= 0)
+						a.translate(-(speed + customSpeed), 0);
+					else if(speed >= 0)
+						a.translate(-(speed), 0);
+					
+				}
 			}
 		}
 		

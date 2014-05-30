@@ -8,15 +8,18 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSFont;
@@ -121,12 +124,14 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		
 		OrthographicCamera camera = (OrthographicCamera)stage.getCamera();
 		
+	
 		
 		// modify camera here
 		physics_world.step(1/60f, 6, 2);
 		
 		
 		updatePhysics();
+		
 		
 
 		//camera.position.set(player.getX() + player.getOriginX() + 200, player.getY() + player.getOriginY() + 75, 10000.0f);
@@ -136,15 +141,19 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		
 		//shader.begin();
 
-		
+
 		 Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 	        stage.act(Gdx.graphics.getDeltaTime());
 	        stage.draw();
 	       
 		//shader.end();
 	       
-	     if(player.getY() < -250)
-	    	 player.hitGround();
+	     if(player.getY() < -250) {
+	    	 //player.hitGround();
+	    	 if(player.imperviousToWater)
+	    		 player.setY(1000);
+	    	 player.kill("water");
+	     }
 		
 		
 	   if(Gdx.input.isKeyPressed(Keys.P)) {
@@ -175,6 +184,12 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		  	 //timeWithoutError += 1f;
 		  	 world.speed = (float) Math.log(speedBonus) * world.defaultSpeed;
 		  	 
+		  	 if(player.isDead()) {
+		  		 this.setGameState(GameState.paused);
+		  	 }
+		  	 
+		  	 player.updateSound(soundManager, (int)world.speed);
+		  	 
 	    	 break;
 	     case showingVersus:
 	    	 
@@ -201,6 +216,11 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	    	 
 	    	 break;
 	     case paused:
+	    	 
+	    	 world.freezeWorld();
+	    	 player.freeze();
+	    	 
+	    	 
 	    	 break;
 	     default:
 	    	 break;
@@ -211,7 +231,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	     
 	        Table.drawDebug(stage); // This is optional, but enables debug lines for tables.
 
-		
+
 	}
 	
 	public void updatePhysics() {
@@ -246,7 +266,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	@Override
 	public void show() {
 		if(!isLoaded())
-			load();
+			load(); 
 		
 		if(!hasShown) {
 			
@@ -282,7 +302,8 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		
 	  		player = new Kiku();
 	  		player.addPhysics(physics_world);
-	  		BASENODE.addActor(player);
+	  		player.setX(-500);
+	  		player.setY(450);
 	  		
 	  		//KiOrb orb = new KiOrb();
 	  		//orb.setTarget(player);
@@ -295,8 +316,11 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		
 	  		world = new WorldManager(-1500,-720/2,1280 * 3,720 * 2);
 	  		world.addPhysics(physics_world);
+	  		world.setPlayer(player);
 	  		BASENODE.addActor(world);
 	  		
+	  		world.addActor(player);
+
 	  		
 	  		distanceCounter = new JSFont("0.0 Squirrels");
 	  		distanceCounter.setPosition(-1000,-50);
@@ -364,48 +388,73 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
        	soundManager.load(sound);
        }
        
+    soundManager.load(new LucidSound("sfx/correct.ogg"), "Correct");
+    soundManager.load(new LucidSound("sfx/footsteps.ogg"), "Footsteps");
+    soundManager.load(new LucidSound("sfx/wrong.ogg"), "Wrong");
+
+       
      
    	LAssetManager aManager = GameManager.getAssetsManager();
    	aManager.clear();
 
-   	aManager.load("data/2_Tile.png", Texture.class, "Platform_Generic");
-   	aManager.load("data/enemies/eye/eye_sprite_sheet.png",Texture.class, "Enemy");
-   	aManager.load("data/enemies/eye/eye_guy_front.png",Texture.class, "Enemy_Eye_Front");
+   	aManager.loadTexture("data/2_Tile.png",  "Platform_Generic");
+  	aManager.loadTexture("data/enemies/eye/eye_sprite_sheet_half.png", "Enemy");
+   	aManager.loadTexture("data/enemies/eye/eye_guy_front.png", "Enemy_Eye_Front");
    	
 
    	
-  	aManager.load("data/background/back_clouds.png",Texture.class, "Back Clouds");
-   	aManager.load("data/background/front_clouds.png",Texture.class, "Front Clouds");
-   	aManager.load("data/background/front_f.png",Texture.class, "Front F");
-   	aManager.load("data/background/mid_f.png",Texture.class, "Mid F");
-   	aManager.load("data/background/back_f.png",Texture.class, "Back F");
-   	aManager.load("data/background/sky.png",Texture.class, "Sky");
-   	aManager.load("data/front_stars.png",Texture.class, "Front Stars");
-   	aManager.load("data/laser.png",Texture.class, "Platform Spawn");
+  	aManager.loadTexture("data/background/small/back_clouds_small.png", "Back Clouds");
+   	aManager.loadTexture("data/background/small/front_clouds_small.png", "Front Clouds");
+   	aManager.loadTexture("data/background/small/front_f_small.png", "Front F");
+   	aManager.loadTexture("data/background/small/mid_f_small.png", "Mid F");
+   	aManager.loadTexture("data/background/small/back_f_small.png", "Back F");
+   	aManager.loadTexture("data/background/small/sky_small.png", "Sky");
+   	//aManager.loadTexture("data/front_stars.png","Front Stars");
+   	aManager.loadTexture("data/laser.png", "Platform Spawn");
    	
-   	aManager.load("data/player/actual_sprite_sheet.png",Texture.class, "Kiku");
-   	aManager.load("data/player/Jump_Sprite_Sheet.png",Texture.class, "Kiku_Jump");
+   	aManager.loadTexture("data/player/actual_sprite_sheet.png", "Kiku");
+   	aManager.loadTexture("data/player/Jump_Sprite_Sheet.png", "Kiku_Jump");
+   	aManager.loadTexture("data/player/kiku_back.png", "Kiku_Back");
+   	aManager.loadTexture("data/player/kiku_die_final.png", "Kiku_Die");
 
    	
-   	aManager.load("data/background.png", Texture.class, "VS Back");
-   	aManager.load("data/wind.png", Texture.class, "VS Swoosh");
+   	aManager.loadTexture("data/background.png", "VS Back");
+   	aManager.loadTexture("data/wind.png", "VS Swoosh");
    	aManager.loadTexture("data/ui/VS.png", "VS VS");
    	aManager.loadTexture("data/background_border.png", "VS Back Border");
 
    	aManager.loadTexture("data/ui/Question Box.png", "QBox");
-   	aManager.loadTexture("data/background/battle/bg2.png", "Battle Back");
+   	aManager.loadTexture("data/background/battle/bg2_small.png", "Battle Back");
 
 
    	
    	aManager.loadTexture("data/effects/blue_aura_small.png", "Aura_B");
    	aManager.loadTexture("data/effects/blue_orb_small.png", "Orb_B");
    	aManager.loadTexture("data/effects/blue_aura_kiku.png", "PlayerAura");
+   	aManager.loadTexture("data/environment/objects/nanoki.png", "NanoKi");
+
    	
    	aManager.loadTexture("data/effects/white flash.png", "White");
    	aManager.loadTexture("data/effects/explosion.png", "Explosion");
 
-   	aManager.loadTexture("data/environment/platforms/le_platform.png", "Platform_Le");
-   	aManager.loadTexture("data/background/river.png", "River");
+   	aManager.loadTexture("data/environment/platforms/small/le_platform_small.png", "Platform_Le");
+   	aManager.loadTexture("data/environment/platforms/small/le_spikes_small.png", "Platform_Spikes");
+   	aManager.loadTexture("data/environment/platforms/small/moving_platform_small.png", "Platform_Moving");
+   	aManager.loadTexture("data/environment/platforms/small/falling_platform_small.png", "Platform_Falling");
+   	aManager.loadTexture("data/environment/platforms/small/starting_platform.png", "Platform_Starting");
+   	aManager.loadTexture("data/background/small/river_small.png", "River");
+   	
+   	aManager.loadTexture("data/player/critters/birdie_small.png", "Animal_Bird");
+   	aManager.loadTexture("data/player/critters/frog.png", "Animal_Frog");
+   	aManager.loadTexture("data/player/critters/ki_orb_dude.png", "Animal_KiDude");
+
+   	aManager.loadTexture("data/effects/bubble.png", "Le_Bubble");
+   	
+   	aManager.loadTexture("data/mega_laser.png", "Laser");
+
+   	
+
+
 
 
 
@@ -431,9 +480,16 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	aManager.loadTexture("data/wind.png", "VS Swoosh");
 */
    	
+   	/*CAUSES ERROR
    	while(!aManager.update()) {};	
    	aManager.finishLoading();
+   	*/
+
    	//aManager.update();
+   	
+   	//aManager.update();
+   	
+   	
 	
    //Gdx.app.log("AssetManager", "ENEMY TEXTURE GET GET" + aManager.get(aManager.getPath("Enemy"), Texture.class).getWidth() + " <<<<");
    	//aManager.bindTextures();
@@ -441,20 +497,28 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	Gdx.app.log("AssetManager", "BAM!! " + aManager.getDiagnostics());
 		loaded = true;
 	}
+	
+	
    	
 	
 	
 	public void hitMonster(Monster j) {
 		
 		if(getState() == GameState.running) {
-			setGameState(GameState.showingVersus);
-			//soundManager.play(soundManager.QUESTION());
-			soundManager.play(abcdDialogue.getQRBlock().getQuestionSound());
 			
+			if(!player.isStunned) {
 			
-			
-			gameManager.setScreen(new VersusScreen(gameManager, this, abcdDialogue));
-			lastHit = j;
+				setGameState(GameState.showingVersus);
+				//soundManager.play(soundManager.QUESTION());
+				soundManager.play(abcdDialogue.getQRBlock().getQuestionSound());
+				
+				
+				gameManager.setScreen(new VersusScreen(gameManager, this, abcdDialogue));
+				lastHit = j;
+			} else {
+				player.removeKi();
+				j.addAction(Actions.parallel(Actions.color(Color.GREEN, .2f, Interpolation.exp10), Actions.moveBy(0, 600, 2f)));
+			}
 			
 		}
 		
@@ -475,16 +539,24 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 			
 			lastHit.removePhysics();
 			lastHit.remove();
+			
+			soundManager.play("Correct");
 		}
 		else {
+			
 			
 			player.removeKi();
 			
 			setGameState(GameState.running);
 			speedBonus *= 0.5f;
-			if(speedBonus < 2)
+			if(speedBonus < 2) {
 				speedBonus = 2;
+			}
+			soundManager.play("Wrong");
+
 		}
+		
+		player.addJump();
 	}
 	
 	

@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSAnimatedActor;
 import com.omg.drawing.JSAnimation;
+import com.omg.sfx.SoundManager;
 import com.omg.sswindler.GameManager;
 
 public class VersusDialogue extends JSActor {
@@ -73,9 +74,9 @@ public class VersusDialogue extends JSActor {
 	   	leftComp.setPosition(-35,50);
 	   	leftComp.setScale(3.5f);
 	   	
-	   	rightComp = new JSAnimatedActor(new JSAnimation("Idle", GameManager.getAssetsManager().getTexture("Enemy"), 200, 160, 10, 200));
+	   	rightComp = new JSAnimatedActor(new JSAnimation("Idle", GameManager.getAssetsManager().getTexture("Enemy"), 200/2, 160/2, 10, 200));
 	   	rightComp.setPosition(775, 60);
-	   	rightComp.setScale(3.5f);
+	   	rightComp.setScale(7f); //3.5f
 	   	
 	   	JSAnimation explode = new JSAnimation("Explode", GameManager.getAssetsManager().getTexture("Explosion"), 100, 100, 4, 100);
 	   	explode.setRepeat(false);
@@ -119,8 +120,9 @@ public class VersusDialogue extends JSActor {
 	
 	int time = 0;
 	
+	boolean explosionPlayed = false;
 	
-	public void updateFromVersus() {
+	public void updateFromVersus(SoundManager soundManager) {
 		
 		switch(currentState) {
 		
@@ -137,6 +139,10 @@ public class VersusDialogue extends JSActor {
 				explosion.getAnimation().reset();
 				explosion.setVisible(true);
 				vsText.remove();
+				if(!explosionPlayed) {
+					soundManager.play("Explosion");
+					explosionPlayed = true;
+				}
 			}
 			
 			if(time > 60) {

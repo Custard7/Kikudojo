@@ -10,6 +10,7 @@ import com.omg.drawing.JSActor;
 import com.omg.screens.GameScreen;
 import com.omg.ssplayer.Jumpable;
 import com.omg.ssplayer.Kiku;
+import com.omg.ssplayer.mechanics.BubblePackage;
 
 public class CollisionHandler implements ContactListener {
 
@@ -39,6 +40,7 @@ public class CollisionHandler implements ContactListener {
 	    JSActor j = (JSActor)a.getUserData();
 	    JSActor s = (JSActor)b.getUserData();
 	    
+	    
 	    //Gdx.app.log(TAG, "Collision: J:" + j.getTags().get(0) + " S: " + s.getTags().get(0));
 
 	    
@@ -48,16 +50,8 @@ public class CollisionHandler implements ContactListener {
 	    {
 	    	
     		((Jumpable)s).hitGround(true);
+    		((Platform)j).playerHit((Jumpable)s);
     		
-    		Gdx.app.log("KIKU","HitGround");
-
-	    	/*if(j.hasTag("Ceiling"))
-	    	{
-	    		((Jumpable)s).hitGround();
-	    	}
-	    	else {
-	    		((Jumpable)s).hitGround();
-	    	}*/
 	    }
 	    
 	    
@@ -67,6 +61,24 @@ public class CollisionHandler implements ContactListener {
 	    	//((Kiku)s).hitMonster((Monster)j);
 	    	gameScreen.hitMonster((Monster)j);
 	    	
+	    }
+	    
+	    if(j.hasTag("Bubble") && s.hasTag("Kiku")) {
+    		((BubblePackage)j).playerHit(((Kiku)s));
+
+	    	
+	    }
+	    
+	    if(j.hasTag("Laser") && s.hasTag("Kiku")) {
+    		((Laser)j).playerHit(((Kiku)s));
+
+	    	
+	    }
+	    
+	    if(j.hasTag("NanoKi") && s.hasTag("Kiku"))
+	    {
+	    	
+    		((NanoKi)j).playerHit((Jumpable)s);
 	    }
 	    
 
@@ -101,8 +113,18 @@ public class CollisionHandler implements ContactListener {
 	    if(j.hasTag("Platform") && s.hasTag("Jumpable"))
 	    {
 	    	((Jumpable)s).inAir();
-		    //Gdx.app.log(TAG, "Collision b/w Jumpable and Platform");
-    		Gdx.app.log("KIKU","FELL OFF ");
+    		((Platform)j).playerStopHit((Jumpable)s);
+	    	
+	    }
+	    
+	    if(j.hasTag("NanoKi") && s.hasTag("Kiku"))
+	    {
+	    	
+    		((NanoKi)j).playerStopHit((Jumpable)s);
+	    }
+	    
+	    if(j.hasTag("Laser") && s.hasTag("Kiku")) {
+    		((Laser)j).playerStopHit(((Kiku)s));
 
 	    	
 	    }

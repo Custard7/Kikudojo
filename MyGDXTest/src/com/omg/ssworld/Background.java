@@ -26,7 +26,8 @@ public class Background extends JSActor {
 	
 	
 	public Background() {
-		super(new TextureRegion(GameManager.getAssetsManager().get("data/front_stars.png", Texture.class),0,0,1024,1024));
+		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Sky"),0,0,1,1));
+		//super(new TextureRegion(GameManager.getAssetsManager().get("data/front_stars.png", Texture.class),0,0,1024,1024));
 		//super(new TextureRegion(GameManager.getAssetsManager().getTexture("Front Stars"),0,0,1024,1024));
 		
 		addTag("Background");

@@ -1,5 +1,7 @@
 package com.omg.sfx;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
@@ -22,6 +24,8 @@ public class SoundManager
     public LucidSound QUESTION() {
     	return new LucidSound("questions/mayo.wav");
     }
+    
+    HashMap<String, LucidSound> soundsLoaded;
 
     /**
      * The volume to be set on the sound.
@@ -47,6 +51,8 @@ public class SoundManager
     {
         soundCache = new LRUCache<LucidSound,Sound>( 15 );
         soundCache.setEntryRemovedListener( this );
+        
+        soundsLoaded = new HashMap<String, LucidSound>();
     }
 
     /**
@@ -67,9 +73,19 @@ public class SoundManager
         }
 
         // play the sound
-        Gdx.app.log( TAG, "Playing sound: " + sound.name() );
+        //Gdx.app.log( TAG, "Playing sound: " + sound.name() );
         soundToPlay.play( volume );
     }
+    
+    /**
+     * Plays a specified sound by alias
+     * @param alias
+     */
+    public void play(String alias) {
+    	play(soundsLoaded.get(alias));
+    }
+    
+    
     /**
      * Caches a specific sound
      */
@@ -82,6 +98,14 @@ public class SoundManager
         }
     }
 
+    /**
+     * Caches a specific sound with an alias
+     */
+    public void load(LucidSound sound, String alias) {
+    	load(sound);
+    	soundsLoaded.put(alias, sound);
+    }
+    
     /**
      * Sets the sound volume which must be inside the range [0,1].
      */

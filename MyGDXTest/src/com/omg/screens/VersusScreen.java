@@ -23,6 +23,7 @@ import com.omg.events.DialogueListener;
 import com.omg.filemanagement.QRSet.QROptions;
 import com.omg.gui.ABCDDialogue;
 import com.omg.gui.VersusDialogue;
+import com.omg.sfx.LucidSound;
 import com.omg.sfx.MusicManager;
 import com.omg.sfx.SoundManager;
 import com.omg.spriter.TextureProvider;
@@ -180,10 +181,11 @@ public class VersusScreen implements Screen, TextureProvider {
 	    	dialogue.setVisible(false);
 	    	battleBASE.setVisible(false);
 	    	vsDialogue.setVisible(true);
-	    	vsDialogue.updateFromVersus();
+	    	vsDialogue.updateFromVersus(soundManager);
 	    	
 	    	if(vsDialogue.isDone()) {
 	    		setState(VSScreenState.Battling);
+				soundManager.play("Slimy");
 	    	}
 	    	
 	    	break;
@@ -261,8 +263,9 @@ public class VersusScreen implements Screen, TextureProvider {
   		battleBASE.setVisible(false);
   		BASENODE.addActor(battleBASE);
   		
-  		battleBackground = new JSActor(new TextureRegion(GameManager.getAssetsManager().getTexture("Battle Back"),0,0,1280,720));
+  		battleBackground = new JSActor(new TextureRegion(GameManager.getAssetsManager().getTexture("Battle Back"),0,0,640,360));
   		battleBackground.setPosition(-340, -560);
+  		battleBackground.setScale(2);
   		battleBASE.addActor(battleBackground);
   		
   		
@@ -302,10 +305,10 @@ public class VersusScreen implements Screen, TextureProvider {
   		battleBottom.addActor(a3Text);
   		
   		
-	   	JSAnimation kikuAnimation = new JSAnimation("Jumping", GameManager.getAssetsManager().getTexture("Kiku_Jump"), 200, 200, 10, 200);
+	   	JSAnimation kikuAnimation = new JSAnimation("Back", GameManager.getAssetsManager().getTexture("Kiku_Back"), 550, 400, 1, 10000);
   		battleKiku = new JSAnimatedActor(kikuAnimation);
-  		battleKiku.setPosition(-250,-350);
-  		battleKiku.setScale(2);
+  		battleKiku.setPosition(-250,-600);
+  		battleKiku.setScale(1.2f);
   		battleScene.addActor(battleKiku);
   		
   		//BUTTONS
@@ -327,6 +330,9 @@ public class VersusScreen implements Screen, TextureProvider {
        // soundManager.setVolume( preferencesManager.getVolume() );
         soundManager.setEnabled( true);
         
+        
+        soundManager.load(new LucidSound("sfx/slimy.ogg"), "Slimy");
+        soundManager.load(new LucidSound("sfx/transition_explosion.ogg"), "Explosion");
   		
 		
 	}

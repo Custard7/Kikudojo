@@ -19,8 +19,8 @@ public class GameManager extends Game {
 	MainMenuScreen menuScreen;
 	GameScreen 	   gameScreen;
 	
-	public static final int VIRTUAL_WIDTH = 1280;
-	public static final int VIRTUAL_HEIGHT = 720;
+	public static final int VIRTUAL_WIDTH = 1280; //1280
+	public static final int VIRTUAL_HEIGHT = 720; //720
 	public static final float ASPECT_RATIO =
 	        (float)VIRTUAL_WIDTH/(float)VIRTUAL_HEIGHT;
 	

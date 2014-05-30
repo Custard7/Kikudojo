@@ -43,6 +43,21 @@ public class Jumpable extends JSActor {
 	
 	int groundCounts = 0;
 	
+	int jumpCounts = 0;
+	public int maxJumps = 1;
+	
+	public boolean isStunned = false;
+	public boolean playerYFrozen = false;
+	
+	boolean _isDead = false;
+	
+	public boolean isDead() {
+		return _isDead;
+	}
+	protected void setDead(boolean v) {
+		_isDead = v;
+	}
+	
 	public Jumpable()
 	{
 		super(new TextureRegion(new Texture(Gdx.files.internal("data/ship_blue.png")),0,0,256,256));
@@ -72,6 +87,7 @@ public class Jumpable extends JSActor {
 	@Override
 	 public void draw (Batch batch, float parentAlpha) {
 		 super.draw(batch, parentAlpha);
+		 
 		
 		 if(!frozen)
 		 {
@@ -84,14 +100,22 @@ public class Jumpable extends JSActor {
 		
 		 }
 		 
+		 if(playerYFrozen) {
+			 movement.stop();
+		 }
+		 
+		 
+		 
 
 		 switch(jumpState) {
 			
 			case onGround:
 				break;
 			case inAir:
+				if(playerYFrozen)
+					break;
 				accelerateY(-gravity/8);
-				if(!(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched()))
+				if(!(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched()) || isStunned)
 					accelerateY(-gravity * 2 );
 
 				break;
@@ -131,19 +155,50 @@ public class Jumpable extends JSActor {
 		
 		//body.applyLinearImpulse(0, 100, getX(), getY(), true);
 		
-		switch(jumpState) {
+		/*switch(jumpState) {
 	
 		case onGround:
 			accelerateY(strength);
 			jumpState = JumpableState.inAir;
 			jumpedFromGround = true;
+			jumpCounts++;
 			break;
 		case inAir:
 			//accelerateY(strength);
-			if(canJump && !jumpedFromGround) {
+			if(canJump && (!jumpedFromGround || jumpCounts < maxJumps)) {
 				movement.stop();
 				accelerateY(strength);
-				canJump = false;
+				jumpCounts++;
+				if(jumpCounts >= maxJumps)
+					canJump = false;
+			}
+			break;
+		default:
+			break;
+				
+		}
+		
+		fellFromPlatform = false;*/
+		
+		if(isStunned || isDead())
+			return;
+		
+		switch(jumpState) {
+		
+		case onGround:
+			accelerateY(strength);
+			jumpState = JumpableState.inAir;
+			jumpCounts = 1;
+			break;
+		case inAir:
+			//accelerateY(strength);
+			if((jumpCounts < maxJumps)) {
+				if(this.movement.getVelocity().y < 0)
+					movement.stop();
+				accelerateY(strength);
+				jumpCounts++;
+				if(jumpCounts >= maxJumps)
+					canJump = false;
 			}
 			break;
 		default:
@@ -157,18 +212,23 @@ public class Jumpable extends JSActor {
 	
 	public void hitGround() {
 		
-		jumpState = JumpableState.onGround;
-		movement.stop();
-		jumpedFromGround = false;
-		isInAirTimer.reset();
-		fellFromPlatform = false;
+		if(this.movement.getVelocity().y <= 0 && !isDead()) {
+		
+			jumpState = JumpableState.onGround;
+			movement.stop();
+			jumpedFromGround = false;
+			isInAirTimer.reset();
+			fellFromPlatform = false;
+			jumpCounts=0;
+			isStunned = false;
+		}
 
 	}
 	
 	public void hitGround(boolean count) {
 		hitGround();
 		groundCounts++;
-		Gdx.app.log("KIKU", "----HITTING GROUND----- Counts: " + groundCounts);
+		//Gdx.app.log("KIKU", "----HITTING GROUND----- Counts: " + groundCounts);
 
 	}
 	
@@ -187,6 +247,17 @@ public class Jumpable extends JSActor {
 			isInAirTimer.start();
 			fellFromPlatform = true;
 		}
+	}
+	
+	public void addJump() {
+		if(jumpCounts > 0) {
+			jumpCounts--;
+			canJump = true;
+		}
+	}
+	
+	public boolean isOnGround() {
+		return (groundCounts > 0);
 	}
 	
 	

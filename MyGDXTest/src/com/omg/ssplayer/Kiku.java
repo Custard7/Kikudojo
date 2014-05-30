@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -19,6 +20,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSAnimation;
+import com.omg.sfx.SoundManager;
+import com.omg.ssplayer.CollidableAttachment.CollidableShape;
+import com.omg.ssplayer.mechanics.Animal;
+import com.omg.ssplayer.mechanics.Animal.AnimalType;
+import com.omg.ssplayer.mechanics.BubblePackage.PackageType;
 import com.omg.ssplayer.mechanics.KiOrb;
 import com.omg.sswindler.GameManager;
 import com.omg.ssworld.Monster;
@@ -28,6 +34,7 @@ public class Kiku extends Jumpable {
 
 	JSAnimation runningAnimation;
 	JSAnimation jumpingAnimation;
+	JSAnimation dieAnimation;
 	
 	JSAnimation currentAnimation;
 	
@@ -35,12 +42,16 @@ public class Kiku extends Jumpable {
 	
 	public Color currentColor;
 	
+	CollidableAttachment head;
+	
 	public enum KikuAnim {
 		
 		running,
-		jumping
-		
+		jumping,
+		die
 	}
+	
+	
 	
 	public Kiku(){
 		//runningAnimation = new JSAnimation("Running", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Kiku"), Texture.class), 150, 208, 8, 50);
@@ -48,6 +59,8 @@ public class Kiku extends Jumpable {
 		
 		runningAnimation = new JSAnimation("Running", GameManager.getAssetsManager().getTexture("Kiku"), 150, 208, 8, 50);
 		jumpingAnimation = new JSAnimation("Jumping", GameManager.getAssetsManager().getTexture("Kiku_Jump"), 200, 200, 10, 30);
+		dieAnimation = new JSAnimation("Die", GameManager.getAssetsManager().getTexture("Kiku_Die"), 141, 271, 1, 1000);
+		
 		
 		//this.setColor(getColor().r + 0.9f, getColor().g - 0.9f, getColor().b - 0.9f, getColor().a);
 
@@ -63,6 +76,12 @@ public class Kiku extends Jumpable {
 
 		setRegion(runningAnimation.getRegion());
 		
+		
+		animal = new Animal();
+		animal.setType(AnimalType.nothing);
+		//this.getParent().addActor(animal);
+
+		
 		currentColor = Color.CYAN;
 		
 		playerAura = new JSActor(new TextureRegion(GameManager.getAssetsManager().getTexture("PlayerAura"),0,0,200,200));
@@ -75,28 +94,92 @@ public class Kiku extends Jumpable {
 		this.addActor(playerAura);
 		this.setChildDrawDirection(ChildrenDrawDirection.inFront);
 		
+		
+		head = new CollidableAttachment("Kiku", CollidableShape.circle);
+		head.setRadius(30.0f);
+		head.setPosition(100, 100);
+		this.addActor(head);
+		
 		addTag("Kiku");
+		addTag("STATIC");
 	}
 	
+	@Override
+	public void addPhysics(World physics_world) {
+		super.addPhysics(physics_world);
+		head.addPhysics(physics_world);
+	}
+	
+	
+	boolean spacePressed = false;
 	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
 		
-		setZIndex(1000);
-
-    	
-    	if(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isTouched())
-    	{
-    		jump(2000.0f);
-    		setAnimation(KikuAnim.jumping);
-    	}
-    	
+		//setZIndex(1000);
+		
+		
+		
     	TextureRegion region = currentAnimation.update(delta);
     	
     	if(region != null)
     		setRegion(region);
+    	
+    	if(isDead())
+			return;
+
+ 
+    	if(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.justTouched() )
+    	{
+    		if(!spacePressed) {
+	    		jump(2000.0f);
+	    		setAnimation(KikuAnim.jumping);
+	    		
+	    		if(isStunned)
+	    		{
+	    			stunTaps++;
+	    			this.addAction(Actions.sequence(Actions.moveBy(-30f, 0, .2f),Actions.moveBy(30f, 0, .2f)));
+	    			Gdx.input.vibrate(100);
+	    		}
+	    		
+    		}
+    		spacePressed = true;
+    	} else {
+    		spacePressed = false;
+    	}
+    	
+
+    	
+    	if(stunTaps >= tapsToRelease) {
+    		unfreezeY();
+    	}
+    	
+    	
+    	
+    	
+
         
+		
+	}
+	
+	int footstepTimer = 0;
+	int footstepInterval = 250;
+	
+	public void updateSound(SoundManager soundManager, int speed) {
+		
+		if(isOnGround()) {
+			footstepTimer++;
+			
+			int footstepIntervalDynamic = footstepInterval/speed;
+			
+			if(footstepTimer > footstepIntervalDynamic) {
+				soundManager.play("Footsteps");
+				footstepTimer = 0;
+			}
+		} else {
+			footstepTimer = 1000;
+		}
 		
 	}
 	
@@ -106,6 +189,53 @@ public class Kiku extends Jumpable {
 		
 		setAnimation(KikuAnim.running);
 		
+	}
+	
+	public void kill(String data) {
+		
+		if(data.equalsIgnoreCase("spikes") && imperviousToSpikes)
+			return;
+		
+		if(data.equalsIgnoreCase("water") && imperviousToWater)
+			return;
+			
+			
+		setAnimation(KikuAnim.die);
+		
+		if(!isDead()) {
+			Gdx.input.vibrate(new long[] {0,300,50,200,45,100,40,100,35,100,50,300}, -1);
+		}
+		
+		setDead(true);
+		
+		
+		
+	}
+	
+	
+	int stunTaps = 0;
+	int tapsToRelease = 0;
+	
+	public void stun(int taps) {
+		this.isStunned = true;
+		stunTaps = 0;
+		tapsToRelease = taps;
+	}
+	
+	public void unstun() {
+		this.isStunned = false;
+	}
+	
+	public void unfreezeY() {
+		this.playerYFrozen = false;
+		this.setColor(Color.WHITE);
+
+	}
+	
+	public void freezeY() {
+		this.playerYFrozen = true;
+		this.setColor(Color.GREEN);
+
 	}
 	
 	public void setAnimation(KikuAnim anim) {
@@ -122,11 +252,110 @@ public class Kiku extends Jumpable {
 
 			currentAnimation = jumpingAnimation;
 			setScale(1.2f);
+			break;	
+			
+		case die:
+			currentAnimation = dieAnimation;
+			setScale(1.0f);
+			if(!isDead())
+				this.addAction(Actions.sequence(Actions.moveBy(-25, 200, 1, Interpolation.exp10Out), Actions.moveBy(-25, -1500, 3.5f, Interpolation.bounceOut)));
 			break;
 		
 		}
 		
+			
+		
 	}
+	
+	
+
+	
+	Animal animal;
+	boolean firstAnimal = true;
+	
+	public void collectBubble(PackageType t) {
+		
+		Gdx.app.log("KIKU", "Bubble Collected! Type: " + t.toString());
+		
+		switch(t) {
+		
+		case nothing:
+			break;
+		case frog:
+			
+
+			if(animal == null) 
+				animal = new Animal();
+			
+			animal.setType(AnimalType.frog);
+			animal.setX(this.getX()- 100);
+			animal.setTarget(this);								
+			
+			break;
+		case bird:
+			
+			if(animal == null) 
+				animal = new Animal();
+			
+			animal.setType(AnimalType.bird);
+			animal.setX(this.getX()- 100);
+			animal.setTarget(this);
+			
+			break;
+		case kiDude:
+			
+			if(animal == null) 
+				animal = new Animal();
+			
+			animal.setType(AnimalType.kiDude);
+			animal.setX(this.getX()- 100);
+			animal.setTarget(this);
+			
+			break;
+		
+		}
+		
+		if(firstAnimal)
+		{
+			this.getParent().addActor(animal);
+			firstAnimal = false;
+		}
+		
+		setPowers(animal.getType());
+		
+	}
+	
+	
+	
+	public void setPowers(AnimalType t) {
+		
+		maxJumps = 1;
+		lessKi = 0;
+		recovery = false;
+		
+		switch(t) {
+		
+		case frog:
+			maxJumps = 2;
+			break;
+		case bird:
+			recovery = true;
+			break;
+		case kiDude:
+			lessKi = 1;
+			break;
+		
+		}
+		
+		
+	}
+	
+	int lessKi = 0;
+	boolean recovery = false;
+	boolean imperviousToSpikes = false;
+	public boolean imperviousToWater = false;
+	
+	
 	
 	int kiTotal = 0;
 	int auraTotal = 0;
@@ -150,7 +379,7 @@ public class Kiku extends Jumpable {
 		
 		kiTotal++;
 		
-		if(kiTotal > 5) {
+		if(kiTotal > 5 - lessKi) {
 			collectAura();
 			removeAllKi(true);
 		}
@@ -210,6 +439,18 @@ public class Kiku extends Jumpable {
 	public void removeAura() {
 		auraTotal--;
 		updateAura();
+	}
+	
+	
+	int nanoKiCollected = 0;
+	
+	public void collectNanoKi(int value) {
+		nanoKiCollected+=value;
+	}
+	
+	
+	public int getNanoKiCollected() {
+		return nanoKiCollected;
 	}
 	
 	

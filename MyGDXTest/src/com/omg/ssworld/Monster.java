@@ -1,8 +1,11 @@
 package com.omg.ssworld;
 
+import java.awt.Color;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -10,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSAnimation;
 import com.omg.sswindler.GameManager;
@@ -25,24 +29,36 @@ public class Monster extends JSActor {
 	protected static int c_width = 200;
 	protected static int c_height = 160;
 	
+	protected static int c_width_t = 200/2;
+	protected static int c_height_t = 160/2;
+	
 	JSAnimation idleAnimation;
+	
+	int randomNum = 0;
+	boolean hasBackedDown = false;
 
 	
 	public Monster()
 	{
 		//super(new TextureRegion(GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class),0,0,c_width,c_height));
 	   	
-		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Enemy"),0,0,c_width,c_height));
+		super(new TextureRegion(GameManager.getAssetsManager().getTexture("Enemy"),0,0,c_width_t,c_height));
 
+		randomNum = (int) (Math.random() * 100);
+		
+		if(randomNum < 95) {
+			shotLaser = true;
+			hasBackedDown = true;
+		}
 		
 		//Gdx.app.log("MONSTER", "ENEMY TEXTURE GET : " + GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class).getTextureObjectHandle() + " <<<<");
 		//Gdx.app.log("MONSTER", "ENEMY TEXTURE GET : " + GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Kiku"), Texture.class).getTextureObjectHandle() + " <<<<");
 
 		//idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().get(GameManager.getAssetsManager().getPath("Enemy"), Texture.class), c_width, c_height, 10, 100);		
-		idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().getTexture("Enemy"), c_width, c_height, 10, 100);		
+		idleAnimation = new JSAnimation("Idle", GameManager.getAssetsManager().getTexture("Enemy"), c_width_t, c_height_t, 10, 100);		
 		setRegion(idleAnimation.getRegion());
 
-		this.setScale(2);
+		this.setScale(4);
 		
 		//super(new TextureRegion(new Texture(Gdx.files.internal("data/big_pixel_coin.png")),0,0,c_width,c_height));
 		//super(new TextureRegion(GameManager.getAssetsManager().get("data/big_pixel_coin.png", Texture.class),0,0,c_width,c_height));
@@ -66,6 +82,7 @@ public class Monster extends JSActor {
 	}
 	
 	double time = 0.0;
+	boolean shotLaser = false;
 	
 	@Override
 	public void act(float delta) {
@@ -75,6 +92,17 @@ public class Monster extends JSActor {
 			body.getWorld().destroyBody(body);
 			this.remove();
 			
+		}
+		if(this.getX() < x + 2500 && !shotLaser && !hasBackedDown) 
+		{
+			this.addAction(Actions.parallel(Actions.scaleBy(1.2f, 1.2f, 0.3f, Interpolation.bounceOut)));
+			hasBackedDown = true;
+		}
+		
+		if(this.getX() < x + 2200 && !shotLaser ) {
+			shootLaser();
+			this.addAction(Actions.moveBy(0f, -150, 0.35f,Interpolation.bounceOut));
+
 		}
 		
 		TextureRegion region = idleAnimation.update(delta);
@@ -95,6 +123,29 @@ public class Monster extends JSActor {
 		this.height = height;
 		
 		
+		
+	}
+	
+	public void shootLaser() {
+		
+		Laser l = new Laser();
+		
+		
+		if( ((JSActor)getParent() ).hasTag("WorldManager") ) {
+			((WorldManager)getParent()).addLaser(l, this.getX(), this.getY(), this);
+		}
+		
+		/*if( ((JSActor)getParent() ).hasTag("WorldManager") ) {
+		
+			l.setWorldBounds(((WorldManager)getParent()).getWorldX(), ((WorldManager)getParent()).getWorldY(), ((WorldManager)getParent()).getWorldWidth(), ((WorldManager)getParent()).getWorldHeight());
+			l.setX(this.getX() - l.getWidth() + 10);
+			l.addPhysics(((WorldManager)getParent()).physics_world);
+			l.setY(this.getY());
+			addActor(l);
+		
+		}*/
+
+		shotLaser = true;
 		
 	}
 	

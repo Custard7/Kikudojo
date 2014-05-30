@@ -13,8 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity;
 import com.omg.gdxlucid.Timer;
+import com.omg.ssplayer.Kiku;
+import com.omg.ssplayer.mechanics.BubblePackage;
 import com.omg.ssworld.background.BackgroundSpawn;
-import com.testflightapp.lib.TestFlight;
 
 public class WorldManager extends JSActor {
 
@@ -40,10 +41,18 @@ public class WorldManager extends JSActor {
 	
 	Timer worldTimer;
 	Timer backTimer;
+	Timer nanoKiTimer;
 	
 	Timer totalPlayTime;
 	
 	World physics_world;
+	
+	BackgroundSpawn foregroundSpawn;
+	BackgroundSpawn riverSpawn;
+	Kiku player;
+	
+	NanoKiSpawn nanoKiSpawn;
+	PlatformSpawn platformSpawn;
 	
 	public enum WorldState {
 		moving,
@@ -72,6 +81,12 @@ public class WorldManager extends JSActor {
 		 totalPlayTime = new Timer();
 		 totalPlayTime.start();
 		 
+		 nanoKiTimer = new Timer();
+		 nanoKiTimer.start();
+		 
+		 nanoKiSpawn = new NanoKiSpawn(this, physics_world, 0);
+		 platformSpawn = new PlatformSpawn(this, physics_world, 15, nanoKiSpawn);
+		 
 		/* addBackgroundSpawn(new BackgroundSpawn(this, "com.omg.ssworld.background.SkyBack"));
 
 		 */
@@ -81,12 +96,14 @@ public class WorldManager extends JSActor {
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Back F", -10, -200))); 		//Mountain Back
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front Clouds", 0, 300))); 		//Clouds Foreground
 		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Mid F", 1, -250))); 			//Grass Middle
-		 addBackgroundSpawn(new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("River", 10, -1200))); 			//River
 		 
+		 riverSpawn = new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("River", 10, -1200));
+		 addBackgroundSpawn(riverSpawn); 			//River
 		 
-		 BackgroundSpawn fore =  new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front F", 4, -400));
-		 addBackgroundSpawn(fore); 			//Grass Front
+		 foregroundSpawn =  new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front F", 4, -400));
+		 addBackgroundSpawn(foregroundSpawn); 			//Grass Front
 
+		 addTag("WorldManager");
 		 
 	}
 	
@@ -100,14 +117,16 @@ public class WorldManager extends JSActor {
 	
 	public void addPhysics(World physics_world) {
 		this.physics_world = physics_world;
-		 addPlatformSpawn(new PlatformSpawn(this, physics_world, 5));
+		 //addPlatformSpawn(new PlatformSpawn(this, physics_world, 5, nanoKiSpawn));
+		 addPlatformSpawn(platformSpawn);
+		 addNanoKiSpawn(nanoKiSpawn);
+		// addNanoKiSpawn(new NanoKiSpawn(this, physics_world, 5));
 	}
 	
 	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		
 		
 		for(Actor a : this.getChildren()) {
 			
@@ -117,14 +136,24 @@ public class WorldManager extends JSActor {
 				
 				if(((JSActor)a).hasTag("Background"))
 					customSpeed = ((Background)a).getCustomSpeed();
-				else if(getState() == WorldState.frozen)
-					break;
-				a.translate(-(speed + customSpeed), 0);
+				
+				/*if(getState() == WorldState.frozen) {
+					customSpeed = 0;
+					speed = 0;
+					return;
+				}*/
+				
+				if(getState() != WorldState.frozen)
+					a.translate(-(speed + customSpeed), 0);
+
 			}
 		}
+
     	
-		if(getState() != WorldState.frozen)
+		if(getState() != WorldState.frozen) {
 			updatePlatformCreation();
+			updateNanoKiCreation();
+		}
 		else {
 			
 			if(speed > 0)
@@ -140,38 +169,45 @@ public class WorldManager extends JSActor {
         
         
         
-		
+		/*
 		if(totalPlayTime.getTime() > 60000)
 		{
 			if(Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS)
 				TestFlight.passCheckpoint("Played for a minute!");
     		totalPlayTime.reset();
+		}*/
+		
+		//Gdx.app.log("WORLD","CHILDREN: " + this.getChildren().size);
+		
+		//this.getZIndex()
+		
+		if(lastChildAdded != null) {
+			int maxZIndex = lastChildAdded.getZIndex();
+			if(maxZIndex >= 0) {
+				player.setZIndex(maxZIndex);
+				riverSpawn.setZIndex(maxZIndex + 12);
+				foregroundSpawn.setZIndex(maxZIndex + 13);
+			}
 		}
-		
-		Gdx.app.log("WORLD","CHILDREN: " + this.getChildren().size);
-		
+	}
+	
+	public void setPlayer(Kiku k) {
+		this.player = k;
 	}
 	
 	
 	public void updatePlatformCreation() {
-		/*if(worldTimer.getTime()  > 15000 * Gdx.graphics.getDeltaTime()){
-			Platform p = new Platform();
-			p.addPhysics(physics_world);
-			addPlatform(p);
-			worldTimer.reset();
-		}*/
 		
 		//120000
-		if(worldTimer.getTime()  > 200000 * Gdx.graphics.getDeltaTime()){
-			//PlatformSpawn p = new PlatformSpawn(this, physics_world,(int) ((Math.random() * 8) + 4));
-			//addPlatformSpawn(p);
-			
+		/*if(worldTimer.getTime()  > 200000 * Gdx.graphics.getDeltaTime()){
+
 			for(Actor a : this.getChildren()) {
 				
 				if(((JSActor)a).hasTag("P_spawn")) {
 			
 					if(!((PlatformSpawn)a).isOn()) {
-						((PlatformSpawn)a).turnOn((int) ((Math.random() * 8) + 4));
+						int randLength = (int) ((Math.random() * 8) + 4);
+						((PlatformSpawn)a).turnOn(randLength);
 						worldTimer.reset();
 
 						return;
@@ -181,7 +217,68 @@ public class WorldManager extends JSActor {
 			}
 			
 			worldTimer.reset();
-		}
+		}*/
+		
+		/*
+		if(platformSpawn.getLastInChain().isLeftOf(0.50f) && !platformSpawn.isOn()) {
+			int randLength = (int) ((Math.random() * 8) + 4);
+			platformSpawn.turnOn(randLength);
+		}*/
+		platformSpawn.startIfLeftOf(.7f);
+		/*
+		if(platformSpawn.getHeightDifference() < 1) {
+			float percent = .2f/(platformSpawn.getHeightDifference());
+			if(percent < .5f)
+				percent = .5f;
+			if(percent > .9f) {
+				percent = .9f;
+			}
+			Gdx.app.log("Lower: Platform",":" + percent + " delta: " + platformSpawn.getHeightDifference());
+
+			platformSpawn.startIfLeftOf(percent);
+
+			
+		} else {
+			float percent = 1.5f/platformSpawn.getHeightDifference();
+
+			if(percent > .9f)
+			 percent = .9f;
+			if(percent < .5f) {
+				percent = .5f;
+			}
+			Gdx.app.log("Higher: Platform",":" + percent + " delta: " + platformSpawn.getHeightDifference());
+
+			platformSpawn.startIfLeftOf(percent);
+
+		}*/
+		
+		
+		
+	}
+	
+	public void updateNanoKiCreation() {
+		/*if(1==1)
+			return;
+		//120000
+		if(nanoKiTimer.getTime()  > 2000 * Gdx.graphics.getDeltaTime()){
+
+			
+			for(Actor a : this.getChildren()) {
+				
+				if(((JSActor)a).hasTag("NK_spawn")) {
+			
+					if(!((NanoKiSpawn)a).isOn()) {
+						((NanoKiSpawn)a).turnOn((int) ((Math.random() * 8) + 4));
+						nanoKiTimer.reset();
+
+						return;
+
+					}
+				}
+			}
+			
+			nanoKiTimer.reset();
+		}*/
 		
 	}
 	
@@ -245,7 +342,7 @@ public class WorldManager extends JSActor {
 	
 	
 	Platform lastPlatformX = null;
-	boolean samePlatformChain = false;
+	//boolean samePlatformChain = false;
 	
 
 	
@@ -253,7 +350,7 @@ public class WorldManager extends JSActor {
 		
 		p.setWorldBounds(x, y, width, height);
 		if(spawn.shouldChain() && lastPlatformX != null) {
-			p.setX(lastPlatformX.getX() + lastPlatformX.getWidth());
+			p.setX(lastPlatformX.getX() + lastPlatformX.getWidth() * 4);
 		} else {
 			p.setX(x + width);
 		}
@@ -266,6 +363,25 @@ public class WorldManager extends JSActor {
 		
 	}
 	
+	NanoKi lastNanoKi = null;
+	
+	public void addNanoKi(NanoKi p, float yPos, NanoKiSpawn spawn) {
+		
+		p.setWorldBounds(x, y, width, height);
+		if(spawn.shouldChain() && lastNanoKi != null) {
+			p.setX(lastNanoKi.getX() + lastNanoKi.getWidth() * 4);
+		} else {
+			p.setX(x + width);
+		}
+		p.addPhysics(physics_world);
+		p.setY(yPos);
+		addActor(p);
+		
+		
+		lastNanoKi = p;
+		
+	}
+	
 	public void addMonster(Monster p, float yPos) {
 		
 		p.setWorldBounds(x, y, width, height);
@@ -275,14 +391,40 @@ public class WorldManager extends JSActor {
 		addActor(p);
 	}
 	
-	public void addPlatformSpawn(PlatformSpawn p) {
-		//float ran_y = (float)(Math.random() * (height/2));
+	public void addBubble(BubblePackage b, float yPos) {
+		b.setWorldBounds(x, y, width, height);
+		b.setX(x + width);
+		b.addPhysics(physics_world);
+		b.setY(yPos);
+		addActor(b);
+	}
+	
+	public void addLaser(Laser l, float xPos, float yPos, Monster m) {
+		l.setWorldBounds(x, y, width, height);
+		l.setX(xPos - l.getWidth() + 35);
+		l.addPhysics(physics_world);
+		l.setY(yPos + l.getHeight()/2 + 25);
+		addActor(l);
+		l.setZIndex(m.getZIndex()-1);
 
-		//p.setY(ran_y);
+	}
+	
+	public void addPlatformSpawn(PlatformSpawn p) {
+
 		p.setY(0);
 		p.setX(x + width);
 		
 		addActor(p);
+		
+		
+	}
+	
+	public void addNanoKiSpawn(NanoKiSpawn n) {
+
+		n.setY(0);
+		n.setX(x + width);
+		
+		addActor(n);
 		
 		
 	}
@@ -312,6 +454,14 @@ public class WorldManager extends JSActor {
 			addActor(b);
 		
 	}*/
+	
+	Actor lastChildAdded;
+	
+	@Override
+	public void addActor(Actor a) {
+		super.addActor(a);
+		lastChildAdded = a;
+	}
 	
 	
 	private float oldSpeed = 25;
