@@ -35,6 +35,10 @@ public class VersusScreen implements Screen, TextureProvider {
 	
 	MusicManager musicManager;
 	SoundManager soundManager;
+	
+	public SoundManager getSoundManager() {
+		return soundManager;
+	}
 	 
 	private Stage stage;
 	JSActor BASENODE;
@@ -140,6 +144,8 @@ public class VersusScreen implements Screen, TextureProvider {
  				}
  	  			
  	  		});
+             
+             dialogue.setVSScreen(this);
              
              
              
@@ -333,6 +339,8 @@ public class VersusScreen implements Screen, TextureProvider {
         
         soundManager.load(new LucidSound("sfx/slimy.ogg"), "Slimy");
         soundManager.load(new LucidSound("sfx/transition_explosion.ogg"), "Explosion");
+        soundManager.load(new LucidSound("sfx/button_click.ogg"), "Click");
+
   		
 		
 	}

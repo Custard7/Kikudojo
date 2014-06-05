@@ -37,6 +37,10 @@ public class NanoKi extends JSActor {
 	
 	public int value = 10;
 	
+	JSActor aura;
+
+	
+	
 	public int getTextureWidth() {
 		return c_width;
 	}
@@ -98,8 +102,15 @@ public class NanoKi extends JSActor {
 		super();
 		setType(NanoKiType.normal);
 		
+		aura = new JSActor(new TextureRegion(GameManager.getAssetsManager().getTexture("Aura_B"),0,0,150,150));
+		aura.setX(-45);
+		aura.setY(-35);
+		aura.setScale(0.75f);
+		aura.addAction(Actions.forever(Actions.sequence( Actions.alpha(0, 1), Actions.alpha(1.0f, .5f))));
+		this.addActor(aura);
 		
-		setScale(2);
+		
+		setScale(1.25f);
 		this.setOriginY(-25);
 
 		addTag("NanoKi");

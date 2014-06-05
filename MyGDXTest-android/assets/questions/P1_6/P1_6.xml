@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sample Question and Response File -->
+<qrset
+	title="P1_6"
+	version="1.00"
+	>
+
+	<qrblock num="1" sound="1.ogg">
+		<question>Are you going to change your clothes?</question>
+		<a>This color is very popular.</a>
+		<b> Only if I fall in the water. </b>
+		<c>I am wearing a new dress right now.</c>
+		<answer>B</answer>
+		<hint>あなたは服を着替えるでしょうか？
+
+			  a.　この色はとても人気があります。
+			  b.　水に落ちる場合にだけ。
+			  c.　私はたった今、新しいドレスを着ています。
+
+
+			  解説:　この人は、水に落ちる場合にだけ服を着替えると述べている。よって、Bが適切となる。
+			  答え:　b.　水に落ちる場合にだけ。
+		</hint>
+	</qrblock>
+	<qrblock num="3" sound="3.ogg">
+		<question> Is the store opening today?</question>
+		<a>Yes, I like it the best.</a>
+		<b>No, it is still closed.</b>
+		<c>It is a large store.</c>
+		<answer>B</answer>
+		<hint>お店は今日開いていますか？
+
+			a.　はい、私はそれが特に好きです。
+			b.　いいえ、それはまだ閉まっています。
+			c.　それは大きなお店です。
+
+
+			解説:　お店はまだ閉まっているので、Bが適切となる。
+			答え:　b.　いいえ、それはまだ閉まっています。
+		</hint>
+	</qrblock>
+	<qrblock num="4" sound="4.ogg">
+		<question> Who owns that car?</question>
+		<a>They are doing it.</a>
+		<b>That car is mine.</b>
+		<c>The blue car is stopping.</c>
+		<answer>B</answer>
+		<hint>誰がその車を所有していますか？
+
+			a.　彼らはそれをしています。
+			b.　その車は私のものです。
+			c.　青い車が止まっています。
+
+
+			解説:　質問の問いに的確に答えているBが正解となる。
+			答え:　b.　その車は私のものです。
+		</hint>
+	</qrblock>
+	<qrblock num="6" sound="6.ogg">
+		<question> Where is the coffee shop?　</question>
+		<a>We are leaving at 5:00 p.m.</a>
+		<b>I like milk in my coffee.</b>
+		<c>Next to the train station.</c>
+		<answer>C</answer>
+		<hint>どこに、喫茶店がありますか？
+
+			a.　私たちは午後5時に出発します。
+			b.　私はコーヒーのミルク入りが好きです。
+			c.　電車の駅の横です。
+
+
+			解説:　喫茶店(Coffee Shop)は電車の駅の横にあるので、Cが適切となる。
+			答え:　c.　電車の駅の横です。
+
+		</hint>
+	</qrblock>
+	<qrblock num="7" sound="7.ogg">
+		<question>Why are you feeling sad?</question>
+		<a>Because my grandmother is very ill</a>
+		<b>Because I love walking in the forest.</b>
+		<c>Because I have a dark blue overcoat.</c>
+		<answer>A</answer>
+		<hint>なたはなぜ悲しいですか？
+
+			a.　祖母がたいへんな病気だからです。
+			b.　私は森林を歩くことが大好きだからです。
+			c.　私は濃い青色のオーバーを持っているからです。
+
+
+			解説:　彼女が悲しい理由は祖母が病気だからである。よって、Aが適切となる。
+			答え:　a.　祖母がたいへんな病気だからです。
+		</hint>
+	</qrblock>
+	<qrblock num="8" sound="8.ogg">
+		<question>How can I join the football team?</question>
+		<a>Everyone on the football team is laughing.</a>
+		<b>We can watch football on TV tonight.</b>
+		<c>It's easy. You can come to practice tomorrow.</c>
+		<answer>C</answer>
+		<hint>私はどうしたらフットボールチームに加わることができますか？
+
+			a.　フットボールチームの皆は笑っています。
+			b.　私たちは今夜、テレビでフットボールを見ることができます。
+			c.　簡単ですよ。あなたは明日練習に来ることができます。
+
+
+			解説:　フットボールチームに加わるには、明日練習に来れば良いだけである。よって、Cが適切となる。
+			答え:　c.　簡単ですよ。あなたは明日練習に来ることができます。
+		</hint>
+	</qrblock>
+	<qrblock num="9" sound="9.ogg">
+		<question>Is your uncle good at drawing?</question>
+		<a>Yes, he's an artist.</a>
+		<b>He is sitting on the sofa.</b>
+		<c>No, my uncle is short.</c>
+		<answer>A</answer>
+		<hint>あなたの伯父さんは(絵を)描くことが上手ですか？
+
+			a.　はい、彼は芸術家です。
+			b.　彼はソファーの上に座っています。
+			c.　いいえ、私の伯父は背が低いです。
+
+
+			解説:　この人の伯父さんは芸術家なので絵を描くことが上手である。よって、Aが適切となる。
+			答え:　a.　はい、彼は芸術家です。
+		</hint>
+	</qrblock>
+	<qrblock num="10" sound="10.ogg">
+		<question>Who remembers the new student's name?</question>
+		<a>Robert enjoys reading.</a>
+		<b>I do. His name is Robert.</b>
+		<c>You can help Robert study.</c>
+		<answer>B</answer>
+		<hint>だれが新入生の名前を覚えていますか？
+
+			a.　ロバートは読書を楽しみます。
+			b.　私は覚えています。彼の名前はロバートです。
+			c.　あなたはロバートの勉強を手伝うことができます。
+
+
+			解説:　質問に的確に応答しているBが正解となる。
+			答え:　b.　私は覚えています。彼の名前はロバートです。
+		</hint>
+	</qrblock>
+	<qrblock num="12" sound="12.ogg">
+		<question>What should you say when you push someone but don't mean to push him?</question>
+		<a>Excuse me. I'm sorry.</a>
+		<b>I understand. Thank you.</b>
+		<c>Teach me how to dougie.</c>
+		<answer>A</answer>
+		<hint>押すつもりはなく誰かを押してしまった場合、何を言うべきですか？
+
+			a.　失礼します。すいません。
+			b.　理解します。ありがとうございます。
+			c.　そのやり方を教えてください。 
+
+
+			解説:　押すつもりがなく誰かを押してしまった場合、謝るべきである。よって、Aが適切となる。
+			答え:　a.　失礼します。すいません。
+		</hint>
+	</qrblock>
+	<qrblock num="13" sound="13.ogg">
+		<question>Where do we get beef?</question>
+		<a>From pigs.</a>
+		<b>From cows.</b>
+		<c>From monkeys.</c>
+		<answer>B</answer>
+		<hint>どこで私たちは牛肉を手に入れますか？
+
+			a.　豚から。
+			b.　牛から。
+			c.　猿から。
+
+
+			解説:　Beefは牛肉であることから、Bが適切となる。
+			答え:　b.　牛から。
+		</hint>
+	</qrblock>
+	<qrblock num="14" sound="14.ogg">
+		<question>Why is he taking medicine?</question>
+		<a>Because he's healthy.</a>
+		<b>Because he's ill.</b>
+		<c>Because he's honest.</c>
+		<answer>B</answer>
+		<hint>彼はなぜ薬を飲んでいますか？
+
+			a.　彼は健康だから。
+			b.　彼は病気だから。
+			c.　彼は正直だから。
+
+			解説:　彼は病気なので薬を飲んでいる。よって、Bが適切となる。
+			答え:　b.　彼は病気だから。
+		</hint>
+	</qrblock>
+	<qrblock num="15" sound="15.ogg">
+		<question>When are you going to sleep?</question>
+		<a>I'm going to bed early.</a>
+		<b>I'm very busy in the morning. </b>
+		<c>Usually I do.</c>
+		<answer>A</answer>
+		<hint>あなたはいつ寝るでしょうか？
+
+			a.　私は早く寝ます。
+			b.　私は朝、とても忙しいです。
+			c.　普段、私はそうします。
+
+			解説:　質問に的確に応答しているAが正解となる。
+			答え:　a.　私は早く寝ます。
+		</hint>
+	</qrblock>
+	<qrblock num="17" sound="17.ogg">
+		<question>What is your ring made of?</question>
+		<a>Business.</a>
+		<b>Gold.</b>
+		<c>Vegetable.</c>
+		<answer>B</answer>
+		<hint>あなたの指輪は何から作られていますか？
+
+			a.　ビジネス。
+			b.　金。
+			c.　野菜。
+
+			解説:　質問に的確に応答しているBが正解になる。
+			答え:　b.　金。
+		</hint>
+	</qrblock>
+	<qrblock num="18" sound="18.ogg">
+		<question>Where do you plan to go on vacation?</question>
+		<a>I hope to go to a warm island.</a>
+		<b>My vacation begins in one week.</b>
+		<c>I plan to go with my best friend.</c>
+		<answer>A</answer>
+		<hint>あなたは休暇でどこに行く予定ですか？
+
+			a.　暖かい島に行くことを望みます。
+			b.　私の休暇は1週間後に始まります。
+			c.　私の親友と一緒に行くことを計画しています。
+
+			解説:　この人は休暇で暖かい島に行くことを希望しているので、Aが適切となる。
+			答え:　a.　暖かい島に行くことを望みます。
+		</hint>
+	</qrblock>
+	<qrblock num="19" sound="19.ogg">
+		<question>Why did you tell a lie?</question>
+		<a>Because I am learning to play the guitar.</a>
+		<b>Because he is opening a new business.</b>
+		<c>Because I was afraid to be honest.</c>
+		<answer>C</answer>
+		<hint>あなたはなぜ嘘をつきましたか？
+
+			a.　私はギターを弾くことを学んでいるから。
+			b.　彼は新しい企業を開いているから。
+			c.　私は正直になることを恐れているから。 
+
+			解説:　この人が嘘をつく理由は正直になることを恐れているからである。よって、Cが適切となる。
+			答え:　c.　私は正直になることを恐れているから。 
+		</hint>
+	</qrblock>
+	<qrblock num="20" sound="20.ogg">
+		<question>What holiday is in December?</question>
+		<a>We should have a party.</a>
+		<b>December is the last month on the calendar.</b>
+		<c>Christmas is December 25th.</c>
+		<answer>C</answer>
+		<hint>12月にどんな休日がありますか？
+
+			a.　私たちはパーティーを開くべきです。
+			b.　12月はカレンダーの最後の月です。
+			c.　クリスマスは12月25日です。
+
+			解説:　クリスマスは12月にある休日なので、Cが適切となる。
+			答え:　c.　クリスマスは12月25日です。
+		</hint>
+	</qrblock>
+
+
+
+</qrset>

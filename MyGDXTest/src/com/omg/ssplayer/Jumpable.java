@@ -22,6 +22,9 @@ import com.omg.screens.GameScreen;
 public class Jumpable extends JSActor {
 
 	JSMovementProperties movement;
+	
+	GameScreen gameScreen;
+
 
 	public enum JumpableState {
 		onGround,
@@ -150,6 +153,10 @@ public class Jumpable extends JSActor {
 		accelerateY(yAmount);
 	}
 	
+	public void setGameScreen(GameScreen screen) {
+		this.gameScreen = screen;
+	}
+	
 	
 	public void jump(float strength) {
 		
@@ -189,6 +196,8 @@ public class Jumpable extends JSActor {
 			accelerateY(strength);
 			jumpState = JumpableState.inAir;
 			jumpCounts = 1;
+			playJumpSound();
+			
 			break;
 		case inAir:
 			//accelerateY(strength);
@@ -199,6 +208,13 @@ public class Jumpable extends JSActor {
 				jumpCounts++;
 				if(jumpCounts >= maxJumps)
 					canJump = false;
+				
+				if(jumpCounts > 1) {
+					gameScreen.getSoundManager().play("Ribbit");
+				} else {
+					playJumpSound();
+				}
+				
 			}
 			break;
 		default:
@@ -207,6 +223,17 @@ public class Jumpable extends JSActor {
 		}
 		
 		fellFromPlatform = false;
+	}
+	
+	public void playJumpSound() {
+		
+		gameScreen.getSoundManager().play("Jump");
+		
+	}
+	
+	public void playGroundSound() {
+		//gameScreen.getSoundManager().play("Land");
+
 	}
 	
 	
@@ -221,6 +248,7 @@ public class Jumpable extends JSActor {
 			fellFromPlatform = false;
 			jumpCounts=0;
 			isStunned = false;
+			playGroundSound();
 		}
 
 	}

@@ -71,7 +71,7 @@ public class CollisionHandler implements ContactListener {
 	    
 	    if(j.hasTag("Laser") && s.hasTag("Kiku")) {
     		((Laser)j).playerHit(((Kiku)s));
-
+    		gameScreen.isHittingLaser();
 	    	
 	    }
 	    
@@ -79,6 +79,7 @@ public class CollisionHandler implements ContactListener {
 	    {
 	    	
     		((NanoKi)j).playerHit((Jumpable)s);
+    		gameScreen.collectedNanoKi((NanoKi)j);
 	    }
 	    
 

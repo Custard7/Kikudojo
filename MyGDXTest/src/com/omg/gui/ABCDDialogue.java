@@ -18,6 +18,7 @@ import com.omg.drawing.JSFont;
 import com.omg.events.DialogueListener;
 import com.omg.filemanagement.QRBlock;
 import com.omg.filemanagement.QRSet.QROptions;
+import com.omg.screens.VersusScreen;
 import com.omg.ssworld.WorldManager;
 
 
@@ -30,6 +31,8 @@ public class ABCDDialogue extends Table {
 	private int width;
 	private int height;
 	
+	VersusScreen vsScreen;
+
 	
 	public boolean isActive;
 	
@@ -47,7 +50,9 @@ public class ABCDDialogue extends Table {
 	TextButton C;
 	
 
-
+	public void setVSScreen(VersusScreen screen) {
+		vsScreen = screen;
+	}
 	
 	
 
@@ -135,7 +140,8 @@ public class ABCDDialogue extends Table {
 				if (listener != null)
 		            listener.onSelected(QROptions.A, getAnswer(), isRightAnswer(QROptions.A));
 				randomizeAnswer();
-
+				 playClickSound();
+				
 			}
 		});
 		A.align(Align.right);
@@ -150,6 +156,8 @@ public class ABCDDialogue extends Table {
 				if (listener != null)
 		            listener.onSelected(QROptions.B, getAnswer(), isRightAnswer(QROptions.B));
 				randomizeAnswer();
+				 playClickSound();
+
 			}
 		});
 		B.align(Align.right);
@@ -164,6 +172,8 @@ public class ABCDDialogue extends Table {
 				if (listener != null)
 		            listener.onSelected(QROptions.C, getAnswer(), isRightAnswer(QROptions.C));
 				randomizeAnswer();
+				 playClickSound();
+
 
 			}
 		});
@@ -204,6 +214,12 @@ public class ABCDDialogue extends Table {
 			return true;
 		return false;
 		
+	}
+	
+	public void playClickSound() {
+		if(vsScreen != null) {
+			vsScreen.getSoundManager().play("Click");
+		}
 	}
 	
 	

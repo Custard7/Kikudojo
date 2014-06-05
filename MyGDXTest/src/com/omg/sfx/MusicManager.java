@@ -19,7 +19,12 @@ public class MusicManager
      */
     public enum LucidMusic
     {
-        SWINDLER( "music/swindler_audio2.ogg" );
+        SWINDLER( "music/swindler_audio2.ogg" ),
+        MENU_MUSIC( "music/menurepeat.ogg" ),
+        MENU_OUTRO( "music/outro.ogg" ),
+        GAME_MUSIC( "music/technorepeatable.ogg" ),
+        INTRO_MUSIC("music/intro_music.ogg");
+        
 
         private final String fileName;
 
@@ -67,19 +72,38 @@ public class MusicManager
     public void play(
         LucidMusic music )
     {
-        // check if the music is enabled
+    	play(music, true);
+    }
+    
+    public void play(LucidMusic music, boolean loop) {
+    	play(music.getFileName(), loop);
+    }
+    
+    public void play(String fileName, boolean loop) {
+    	// check if the music is enabled
         if( ! enabled ) return;
 
         // stop any music being played
-        Gdx.app.log( TAG, "Playing music: " + music.name() );
+        Gdx.app.log( TAG, "Playing music: " + fileName );
         stop();
 
         // start streaming the new music
-        FileHandle musicFile = Gdx.files.internal( music.getFileName() );
+        FileHandle musicFile = Gdx.files.internal( fileName );
         musicBeingPlayed = Gdx.audio.newMusic( musicFile );
         musicBeingPlayed.setVolume( volume );
         musicBeingPlayed.setLooping( true );
         musicBeingPlayed.play();
+    }
+    
+    public void pause() {
+    	if(musicBeingPlayed != null) {
+    		musicBeingPlayed.pause();
+    	}
+    }
+    public void resume() {
+    	if(musicBeingPlayed != null) {
+    		musicBeingPlayed.play();
+    	}
     }
 
     /**
@@ -92,6 +116,12 @@ public class MusicManager
             musicBeingPlayed.stop();
             musicBeingPlayed.dispose();
         }
+    }
+    
+    public boolean isPlaying() {
+    	if(musicBeingPlayed != null)
+    		return musicBeingPlayed.isPlaying();
+    	return false;
     }
 
     /**

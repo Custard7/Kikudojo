@@ -28,9 +28,13 @@ import com.omg.events.DialogueListener;
 import com.omg.filemanagement.LEDataHandler;
 import com.omg.filemanagement.QRSet.QROptions;
 import com.omg.gui.ABCDDialogue;
+import com.omg.gui.HUD;
+import com.omg.gui.ReplayMenu;
+import com.omg.gui.ReplayMenu.MenuState;
 import com.omg.gui.VersusDialogue;
 import com.omg.sfx.LucidSound;
 import com.omg.sfx.MusicManager;
+import com.omg.sfx.MusicManager.LucidMusic;
 import com.omg.sfx.SoundManager;
 import com.omg.spriter.TextureProvider;
 import com.omg.ssplayer.Kiku;
@@ -38,6 +42,7 @@ import com.omg.ssplayer.mechanics.KiOrb;
 import com.omg.sswindler.GameManager;
 import com.omg.ssworld.CollisionHandler;
 import com.omg.ssworld.Monster;
+import com.omg.ssworld.NanoKi;
 import com.omg.ssworld.WorldManager;
 import com.testflightapp.lib.TestFlight;
 
@@ -50,6 +55,13 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	 MusicManager musicManager;
 	 SoundManager soundManager;
 	 
+	 public SoundManager getSoundManager() {
+		 return soundManager;
+	 }
+	 
+	 public MusicManager getMusicManager() {
+		 return musicManager;
+	 }
 	 
 	 private Stage stage;
 	 WorldManager world;
@@ -69,7 +81,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	 
 	 JSActor BASENODE;
 	 
-	 JSFont distanceCounter;
+	 HUD worldHUD;
+	 
+	 //JSFont distanceCounter;
 	 float distanceTraveled = 0.0f;
 	 
 	 float speedBonus = 2f;
@@ -77,6 +91,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	 
 	 ABCDDialogue abcdDialogue;
 	 
+	 ReplayMenu replayMenu;
 	 
 	 ShaderProgram shader;
 	 LEDataHandler leDataHandler;
@@ -91,6 +106,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		 leavingVersusCorrect,
 		 leavingVersusIncorrect,
 		 paused,
+		 dead
 		 
 		 
 	 }
@@ -150,9 +166,18 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	       
 	     if(player.getY() < -250) {
 	    	 //player.hitGround();
+	    	 if(!player.isDead())
+		    	 soundManager.play("Splash");
+	    	 
 	    	 if(player.imperviousToWater)
 	    		 player.setY(1000);
 	    	 player.kill("water");
+	    	 
+	     }
+	     
+	     if((player.isDead())) {
+	    	 if(musicManager.isPlaying())
+	    		 musicManager.pause();
 	     }
 		
 		
@@ -170,6 +195,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	     debugRenderer.render(physics_world, camera.combined);
 
 	     
+	  		updateHUD();
+
+	     
 	     switch(getState()) {
 	     
 	     case running:
@@ -179,13 +207,13 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		  	 player.unfreeze();
 		  	 
 		  	 distanceTraveled+=world.speed*5;
-		  	 distanceCounter.setText((int)(distanceTraveled/1000.0f) + " Squirrels, " + (int)(world.speed/1.0f) + " Sq/s");
+		     //distanceCounter.setText((int)(distanceTraveled/1000.0f) + " Squirrels, " + (int)(world.speed/1.0f) + " Sq/s");
 		  	 
 		  	 //timeWithoutError += 1f;
 		  	 world.speed = (float) Math.log(speedBonus) * world.defaultSpeed;
 		  	 
 		  	 if(player.isDead()) {
-		  		 this.setGameState(GameState.paused);
+		  		 this.setGameState(GameState.dead);
 		  	 }
 		  	 
 		  	 player.updateSound(soundManager, (int)world.speed);
@@ -207,7 +235,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	    	 break;
 	     case dialogue:
 	    	 
-	    	 world.freezeWorld();
+	    	world.freezeWorld();
 		  	abcdDialogue.setVisible(true);
 		  	player.freeze();
 	    	 
@@ -222,6 +250,12 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	    	 
 	    	 
 	    	 break;
+	     case dead:
+	    	 world.freezeWorld();
+	    	 player.freeze();
+	    	 
+	    	 dropDownReplayMenu();
+	    	 
 	     default:
 	    	 break;
 	     
@@ -304,6 +338,8 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		player.addPhysics(physics_world);
 	  		player.setX(-500);
 	  		player.setY(450);
+	  		player.setGameScreen(this);
+
 	  		
 	  		//KiOrb orb = new KiOrb();
 	  		//orb.setTarget(player);
@@ -322,9 +358,6 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		world.addActor(player);
 
 	  		
-	  		distanceCounter = new JSFont("0.0 Squirrels");
-	  		distanceCounter.setPosition(-1000,-50);
-	  		BASENODE.addActor(distanceCounter);
 	  		
 	  		
 	       
@@ -350,6 +383,28 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		abcdDialogue.setFillParent(true);
 	  		abcdDialogue.debug();
 	  		//stage.addActor(abcdDialogue);
+	  		
+	  		
+	  		worldHUD = new HUD();
+	  		worldHUD.setGameScreen(this);
+	  		BASENODE.addActor(worldHUD);
+	  		BASENODE.setPosition(0, 1280);
+	  		
+	  		BASENODE.setColor(BASENODE.getColor().r, BASENODE.getColor().g, BASENODE.getColor().b, 0);
+	  		BASENODE.addAction(
+	  				Actions.parallel(
+	  		  		Actions.moveTo(0, 0, 1, Interpolation.swingOut),
+	  				Actions.fadeIn(2.5f, Interpolation.fade)
+	  				));
+	  		
+	  		
+	  		replayMenu = new ReplayMenu();
+	  		replayMenu.setPosition(0, 0);
+	  		replayMenu.setState(MenuState.up);
+	  		stage.addActor(replayMenu);
+
+	  		
+	  		musicManager.play(LucidMusic.GAME_MUSIC);
   		
 		}
 
@@ -368,22 +423,22 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
         textures = new HashMap<String, Texture>();
         
 
- 		 // create the music manager service
+       // create the music manager service
        musicManager = new MusicManager();
-     //  musicManager.setVolume( preferencesManager.getVolume() );
+       //musicManager.setVolume( preferencesManager.getVolume() );
        musicManager.setEnabled( true);
        
        //musicManager.play(LucidMusic.SWINDLER);
 
-       // create the sound manager service
+       //create the sound manager service
        soundManager = new SoundManager();
-      // soundManager.setVolume( preferencesManager.getVolume() );
+       //soundManager.setVolume( preferencesManager.getVolume() );
        soundManager.setEnabled( true);
        
  		
 		
        leDataHandler = new LEDataHandler();
-       leDataHandler.loadQR("qr_sample");
+       leDataHandler.loadQR("P1_6"); //qr_sample
        for(LucidSound sound : leDataHandler.getSounds()){
        	soundManager.load(sound);
        }
@@ -391,6 +446,29 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
     soundManager.load(new LucidSound("sfx/correct.ogg"), "Correct");
     soundManager.load(new LucidSound("sfx/footsteps.ogg"), "Footsteps");
     soundManager.load(new LucidSound("sfx/wrong.ogg"), "Wrong");
+    soundManager.load(new LucidSound("sfx/aura_up.ogg"), "Aura Up");
+    soundManager.load(new LucidSound("sfx/begin.ogg"), "Woosh");
+    soundManager.load(new LucidSound("sfx/bubble_pop.ogg"), "Bubble Pop");
+    soundManager.load(new LucidSound("sfx/button_click.ogg"), "Click");
+    soundManager.load(new LucidSound("sfx/enemy_die.ogg"), "Enemy Death");
+    soundManager.load(new LucidSound("sfx/frog.ogg"), "Ribbit");
+    soundManager.load(new LucidSound("sfx/jump.ogg"), "Jump");
+    soundManager.load(new LucidSound("sfx/land.ogg"), "Land");
+    soundManager.load(new LucidSound("sfx/laser.ogg"), "Laser");
+    soundManager.load(new LucidSound("sfx/nanoki.ogg"), "Nanoki");
+    soundManager.load(new LucidSound("sfx/platform_crumble.ogg"), "Crumble");
+    soundManager.load(new LucidSound("sfx/splash.ogg"), "Splash");
+    soundManager.load(new LucidSound("sfx/player_die.ogg"), "Player Die");
+
+
+
+
+
+
+
+
+
+
 
        
      
@@ -431,7 +509,20 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	aManager.loadTexture("data/effects/blue_aura_small.png", "Aura_B");
    	aManager.loadTexture("data/effects/blue_orb_small.png", "Orb_B");
    	aManager.loadTexture("data/effects/blue_aura_kiku.png", "PlayerAura");
-   	aManager.loadTexture("data/environment/objects/nanoki.png", "NanoKi");
+   	aManager.loadTexture("data/environment/objects/purple_nanoki.png", "NanoKi");
+   	
+   	aManager.loadTexture("data/ui/hud/aura.png", "HUD_Aura");
+   	aManager.loadTexture("data/ui/hud/hud_circle_fill.png", "HUD_Circle_Fill");
+   	aManager.loadTexture("data/ui/hud/hud_quarter_circle.png", "HUD_Circle_Line");
+   	aManager.loadTexture("data/ui/hud/score_box_faded.png", "HUD_ScoreBox");
+   	aManager.loadTexture("data/ui/hud/plus_10.png", "HUD_Plus10");
+   	aManager.loadTexture("data/ui/hud/plus_1.png", "HUD_Plus1");
+   	aManager.loadTexture("data/ui/paused.png", "HUD_Paused");
+   	
+   	aManager.loadTexture("data/ui/replay_menu/drop_down_box.png", "Replay_Billboard");
+
+
+
 
    	
    	aManager.loadTexture("data/effects/white flash.png", "White");
@@ -499,7 +590,61 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	}
 	
 	
+	public void dropDownReplayMenu() {
+		
+		if(replayMenu.getState() == MenuState.up){
+			
+			replayMenu.dropDown();
+			replayMenu.setGameManager(gameManager);
+			replayMenu.setScore(player.getNanoKiCollected());
+			
+			BASENODE.addAction(Actions.fadeOut(4));
+			worldHUD.setVisible(false);
+			
+
+		}
+		
+	}
+	
+	
+	float questionRightRev = 5;
+	float questionWrongSlow = 10;
+	float jumpRev = .01f;
+	float timeSlow = .998f;
+	float nanoKiRev = .05f;
+	float laserSlow = .2f;
+	
+	public void updateHUD() {
+		if(worldHUD != null) {
+		  	 worldHUD.setNanoKiCollected(player.getNanoKiCollected());
+		  	 worldHUD.applyFrictionToSpinner(timeSlow);
+		  	 if(player.isDead()) {
+		  		 worldHUD.setSpinnerSpeed(0);
+		  	 }
+		  	 
+		  	 if(worldHUD.isPaused()) {
+		  		 setGameState(GameState.paused);
+		  	 } else if(getState() == GameState.paused && !player.isDead()) {
+		  		 setGameState(GameState.running);
+
+		  	 }
+		}
+		
+	}
+	
+	
+	
+	public void collectedNanoKi(NanoKi ki) {
+		worldHUD.plus10();
+		worldHUD.revSpinner(nanoKiRev);
+	}
    	
+	public void isHittingLaser() {
+		worldHUD.slowSpinner(laserSlow);
+	}
+	public void playerJumped() {
+		worldHUD.revSpinner(jumpRev);
+	}
 	
 	
 	public void hitMonster(Monster j) {
@@ -511,7 +656,8 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 				setGameState(GameState.showingVersus);
 				//soundManager.play(soundManager.QUESTION());
 				soundManager.play(abcdDialogue.getQRBlock().getQuestionSound());
-				
+				soundManager.setVolume(1.0f);
+				musicManager.setVolume(.20f);
 				
 				gameManager.setScreen(new VersusScreen(gameManager, this, abcdDialogue));
 				lastHit = j;
@@ -530,6 +676,8 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	
 	public void answerSelected(QROptions given, QROptions correct, boolean isRight) {
 		
+		musicManager.setVolume(1.0f);
+
 		if(isRight) {
 			setGameState(GameState.running);
 			abcdDialogue.setQRBlock(leDataHandler.getRandomBlock());
@@ -541,11 +689,17 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 			lastHit.remove();
 			
 			soundManager.play("Correct");
+			soundManager.play("Enemy Death");
+			
+			worldHUD.revSpinner(questionRightRev);
 		}
 		else {
 			
 			
 			player.removeKi();
+			
+			lastHit.removePhysics();
+			lastHit.remove();
 			
 			setGameState(GameState.running);
 			speedBonus *= 0.5f;
@@ -553,6 +707,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 				speedBonus = 2;
 			}
 			soundManager.play("Wrong");
+			
+			worldHUD.slowSpinner(questionWrongSlow);
+
 
 		}
 		

@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.omg.drawing.JSActor;
+import com.omg.screens.GameScreen;
 import com.omg.ssplayer.Jumpable;
 import com.omg.ssplayer.Kiku;
 import com.omg.sswindler.GameManager;
@@ -27,6 +28,7 @@ public class Platform extends JSActor {
 	private int height;
 	
 	Body body;
+	GameScreen gameScreen;
 	
 	protected static int c_width = 512; //512
 	protected static int c_height = 1080; //128 1080
@@ -100,6 +102,9 @@ public class Platform extends JSActor {
 				
 				addFallMovement();
 				Gdx.input.vibrate(100);
+				if(gameScreen != null) {
+					gameScreen.getSoundManager().play("Crumble");
+				}
 				
 				break;
 			default:
@@ -213,6 +218,12 @@ public class Platform extends JSActor {
 		
 		
 		
+	}
+	
+	
+	
+	public void setGameScreen(GameScreen screen) {
+		gameScreen = screen;
 	}
 	
 	@Override

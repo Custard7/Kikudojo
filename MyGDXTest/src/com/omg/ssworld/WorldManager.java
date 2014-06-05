@@ -13,8 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSEntity;
 import com.omg.gdxlucid.Timer;
+import com.omg.screens.GameScreen;
 import com.omg.ssplayer.Kiku;
 import com.omg.ssplayer.mechanics.BubblePackage;
+import com.omg.ssworld.Platform.PlatformType;
 import com.omg.ssworld.background.BackgroundSpawn;
 
 public class WorldManager extends JSActor {
@@ -24,6 +26,8 @@ public class WorldManager extends JSActor {
 	private int y;
 	private int width;
 	private int height;
+	
+	GameScreen gameScreen;
 	
 	
 	public int getWorldX()
@@ -102,6 +106,10 @@ public class WorldManager extends JSActor {
 		 
 		 foregroundSpawn =  new BackgroundSpawn(this, com.omg.ssworld.background.BProperties.makeProperties("Front F", 4, -400));
 		 addBackgroundSpawn(foregroundSpawn); 			//Grass Front
+		 
+		 
+		 
+
 
 		 addTag("WorldManager");
 		 
@@ -120,6 +128,8 @@ public class WorldManager extends JSActor {
 		 //addPlatformSpawn(new PlatformSpawn(this, physics_world, 5, nanoKiSpawn));
 		 addPlatformSpawn(platformSpawn);
 		 addNanoKiSpawn(nanoKiSpawn);
+		 
+		 platformSpawn.createPlatformChain(-1200, -600, 6);
 		// addNanoKiSpawn(new NanoKiSpawn(this, physics_world, 5));
 	}
 	
@@ -193,6 +203,10 @@ public class WorldManager extends JSActor {
 	
 	public void setPlayer(Kiku k) {
 		this.player = k;
+	}
+	
+	public void setGameScreen(GameScreen screen) {
+		this.gameScreen = screen;
 	}
 	
 	
@@ -347,15 +361,22 @@ public class WorldManager extends JSActor {
 
 	
 	public void addPlatform(Platform p, float yPos, PlatformSpawn spawn) {
+		if(spawn.shouldChain() && lastPlatformX != null) {
+			addPlatform(p, lastPlatformX.getX() + lastPlatformX.getWidth() * 4, yPos, spawn);
+		} else {
+			addPlatform(p, x + width, yPos, spawn);
+		}
+	}
+	
+public void addPlatform(Platform p, float xPos, float yPos, PlatformSpawn spawn) {
 		
 		p.setWorldBounds(x, y, width, height);
-		if(spawn.shouldChain() && lastPlatformX != null) {
-			p.setX(lastPlatformX.getX() + lastPlatformX.getWidth() * 4);
-		} else {
-			p.setX(x + width);
-		}
+		p.setX(xPos);
 		p.addPhysics(physics_world);
 		p.setY(yPos);
+		if(gameScreen != null) {
+			p.setGameScreen(gameScreen);
+		}
 		addActor(p);
 		
 		

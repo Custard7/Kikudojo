@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSFont;
 import com.omg.sfx.MusicManager;
@@ -28,10 +29,13 @@ public class LoadingScreen implements Screen, TextureProvider {
 	 private Stage stage;
 	 JSActor BASENODE;
 	 
-	 JSFont menuText;
-	 JSFont touchToContinueText;
+	 //JSFont menuText;
+	 //JSFont touchToContinueText;
 	 
-	 JSActor background;
+	 //JSActor background;
+	 
+	 JSActor loadingText;
+	 JSActor animalRing;
 
 
 	 HashMap<String, Texture> textures;
@@ -101,7 +105,7 @@ public class LoadingScreen implements Screen, TextureProvider {
   		
   		BASENODE.setPosition(-300, 200);
   		
-  		background = new JSActor(new TextureRegion(new Texture(Gdx.files.internal("data/loading background.png")),0,0,1280,720));
+  		/*background = new JSActor(new TextureRegion(new Texture(Gdx.files.internal("data/loading background.png")),0,0,1280,720));
   		background.setPosition(-340, -560);
   		BASENODE.addActor(background);
   		
@@ -112,9 +116,17 @@ public class LoadingScreen implements Screen, TextureProvider {
   		touchToContinueText = new JSFont("Loading ...");
   		touchToContinueText.setPosition(50,-150);
   		BASENODE.addActor(touchToContinueText);
+  		*/
   		
+  		loadingText = new JSActor(new TextureRegion(new Texture(Gdx.files.internal("data/ui/Loading.png")),0,0,500,200));
+  		loadingText.setPosition(50, -175);
+  		BASENODE.addActor(loadingText);
   		
-  		
+  		animalRing = new JSActor(new TextureRegion(new Texture(Gdx.files.internal("data/ui/animal_circle.png")),0,0,150,150));
+  		animalRing.setPosition(225, -375);
+  		animalRing.setOrigin(75, 75);
+  		animalRing.addAction(Actions.forever(Actions.rotateBy(360, 3)));
+  		BASENODE.addActor(animalRing);
   		
   		
   	// create the music manager service

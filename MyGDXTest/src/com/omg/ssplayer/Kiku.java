@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import com.omg.drawing.JSActor;
 import com.omg.drawing.JSAnimation;
+import com.omg.screens.GameScreen;
 import com.omg.sfx.SoundManager;
 import com.omg.ssplayer.CollidableAttachment.CollidableShape;
 import com.omg.ssplayer.mechanics.Animal;
@@ -39,6 +40,8 @@ public class Kiku extends Jumpable {
 	JSAnimation currentAnimation;
 	
 	JSActor playerAura;
+	TextureRegion plus1Texture;
+
 	
 	public Color currentColor;
 	
@@ -94,6 +97,8 @@ public class Kiku extends Jumpable {
 		this.addActor(playerAura);
 		this.setChildDrawDirection(ChildrenDrawDirection.inFront);
 		
+		plus1Texture = new TextureRegion(GameManager.getAssetsManager().getTexture("HUD_Plus1"),0,0,90,150);
+
 		
 		head = new CollidableAttachment("Kiku", CollidableShape.circle);
 		head.setRadius(30.0f);
@@ -103,6 +108,8 @@ public class Kiku extends Jumpable {
 		addTag("Kiku");
 		addTag("STATIC");
 	}
+	
+
 	
 	@Override
 	public void addPhysics(World physics_world) {
@@ -133,6 +140,9 @@ public class Kiku extends Jumpable {
     	if(Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.justTouched() )
     	{
     		if(!spacePressed) {
+    			if(gameScreen != null) {
+    				gameScreen.playerJumped();
+    			}
 	    		jump(2000.0f);
 	    		setAnimation(KikuAnim.jumping);
 	    		
@@ -204,6 +214,7 @@ public class Kiku extends Jumpable {
 		
 		if(!isDead()) {
 			Gdx.input.vibrate(new long[] {0,300,50,200,45,100,40,100,35,100,50,300}, -1);
+			gameScreen.getSoundManager().play("Player Die");
 		}
 		
 		setDead(true);
@@ -217,6 +228,9 @@ public class Kiku extends Jumpable {
 	int tapsToRelease = 0;
 	
 	public void stun(int taps) {
+		if(!isStunned) {
+			gameScreen.getSoundManager().play("Laser");
+		}
 		this.isStunned = true;
 		stunTaps = 0;
 		tapsToRelease = taps;
@@ -277,6 +291,8 @@ public class Kiku extends Jumpable {
 		
 		Gdx.app.log("KIKU", "Bubble Collected! Type: " + t.toString());
 		
+		gameScreen.getSoundManager().play("Bubble Pop");
+		
 		switch(t) {
 		
 		case nothing:
@@ -290,6 +306,7 @@ public class Kiku extends Jumpable {
 			animal.setType(AnimalType.frog);
 			animal.setX(this.getX()- 100);
 			animal.setTarget(this);								
+			gameScreen.getSoundManager().play("Ribbit");
 			
 			break;
 		case bird:
@@ -378,6 +395,7 @@ public class Kiku extends Jumpable {
 		lastTarget = orb;
 		
 		kiTotal++;
+		plus1();
 		
 		if(kiTotal > 5 - lessKi) {
 			collectAura();
@@ -412,6 +430,9 @@ public class Kiku extends Jumpable {
 	public void collectAura() {
 		auraTotal++;
 		updateAura();
+		
+		gameScreen.getSoundManager().play("Aura Up");
+		
 	}
 	
 	public void updateAura() {
@@ -446,11 +467,22 @@ public class Kiku extends Jumpable {
 	
 	public void collectNanoKi(int value) {
 		nanoKiCollected+=value;
+		gameScreen.getSoundManager().play("Nanoki");
 	}
 	
 	
 	public int getNanoKiCollected() {
 		return nanoKiCollected;
+	}
+	
+	public void plus1() {
+		
+		JSActor plus1Particle = new JSActor(plus1Texture);
+		plus1Particle.setPosition(0, 50);
+		plus1Particle.setScale(1.8f);
+		plus1Particle.addAction(Actions.sequence(Actions.moveBy(0, 200, .5f, Interpolation.exp10Out), Actions.parallel(Actions.moveBy(0, -200, 2, Interpolation.exp10In), Actions.alpha(0, 3) ), Actions.removeActor()));
+		this.addActor(plus1Particle);
+		
 	}
 	
 	

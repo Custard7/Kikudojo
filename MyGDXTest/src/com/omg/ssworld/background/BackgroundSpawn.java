@@ -75,8 +75,8 @@ public class BackgroundSpawn extends JSActor {
 		super.act(delta);
 		
 		float speed = worldManager.speed;
-		if(this.getChildren().size <= 3)
-			speed = 1000;
+		//if(this.getChildren().size <= 3)
+			//speed = 1000;
 		
 		if(!(freezeWorldStopsEverything && worldManager.getState() == WorldState.frozen)) {
 		
@@ -158,8 +158,12 @@ public class BackgroundSpawn extends JSActor {
 		
 		b.setWorldBounds(worldManager.getWorldX(), worldManager.getWorldY(), worldManager.getWorldWidth(), worldManager.getWorldHeight());
 
-		if(lastBackground == null)
-			b.setX(worldManager.getWorldX() + worldManager.getWorldWidth());
+		if(lastBackground == null) 
+		{
+			//b.setX(worldManager.getWorldX() + worldManager.getWorldWidth());
+			//b.setX(worldManager.getWorldX());
+			b.setX(-4000);
+		}
 		else
 			b.setX(lastBackground.getX() + 1280 * 1.5f);
 		//b.setY((float) (-Math.random() * (height/2)));

@@ -25,6 +25,8 @@ public class VersusDialogue extends JSActor {
 	
 	JSAnimatedActor explosion;
 	
+	int timeTillExplode = 225;
+	
 	
 	
 	public enum VersusDialogueState {
@@ -135,7 +137,7 @@ public class VersusDialogue extends JSActor {
 			
 			time++;
 			
-			if(time > 45) {
+			if(time > timeTillExplode) {
 				explosion.getAnimation().reset();
 				explosion.setVisible(true);
 				vsText.remove();
@@ -145,7 +147,7 @@ public class VersusDialogue extends JSActor {
 				}
 			}
 			
-			if(time > 60) {
+			if(time > timeTillExplode + 15) {
 				setState(VersusDialogueState.OpenTransitionOut);
 			}
 			

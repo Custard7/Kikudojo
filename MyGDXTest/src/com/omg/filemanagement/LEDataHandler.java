@@ -43,7 +43,7 @@ public class LEDataHandler {
 		XmlReader reader = new XmlReader();
 		
 		Element qrset;
-			qrset = reader.parse(Gdx.app.getFiles().internal("questions/"+ xmlPath + "/xml_" + xmlPath + ".xml"));
+			qrset = reader.parse(Gdx.app.getFiles().internal("questions/"+ xmlPath + "/" + xmlPath + ".xml"));
 		
 		
 		String title = qrset.getAttribute("title");

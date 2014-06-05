@@ -223,15 +223,40 @@ public class PlatformSpawn extends JSActor {
 	private float last_y = -600;
 	private Platform lastPlatform;
 	private Platform lastChainLastPlatform;
-
 	
+	
+	public void createPlatformChain(int xPos, int yPos, int length) {
+		
+		
+		for(int x = 0; x < length; x++) {
+			Platform p = new Platform();
+			p.setType(PlatformType.starting);
+			if(x == 0)
+				worldManager.addPlatform(p, xPos, yPos, this);
+			else
+				worldManager.addPlatform(p, yPos, this);
+
+		}
+
+		
+		
+	}
+
+	/*
 	public void addPlatform(Platform p, float yPos, boolean canReuse) {
 		
 		p.setWorldBounds(worldManager.getWorldX(), worldManager.getWorldY(), worldManager.getWorldWidth(), worldManager.getWorldHeight());
 		if(lastPlatform == null)
+		{
 			p.setX(worldManager.getWorldX() + worldManager.getWorldWidth());
-		else
+			
+		}
+		else {
 			p.setX(lastPlatform.getX() + lastPlatform.getTextureWidth());
+		}
+		
+
+		
 		p.addPhysics(physics_world);
 		p.setY(yPos);
 		if(!canReuse) {
@@ -240,7 +265,7 @@ public class PlatformSpawn extends JSActor {
 		} 
 		lastPlatform = p;
 		
-	}
+	}*/
 	
 
 	
