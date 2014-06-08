@@ -49,7 +49,7 @@ public class SoundManager
      */
     public SoundManager()
     {
-        soundCache = new LRUCache<LucidSound,Sound>( 15 );
+        soundCache = new LRUCache<LucidSound,Sound>( 30 );
         soundCache.setEntryRemovedListener( this );
         
         soundsLoaded = new HashMap<String, LucidSound>();
@@ -74,7 +74,42 @@ public class SoundManager
 
         // play the sound
         //Gdx.app.log( TAG, "Playing sound: " + sound.name() );
-        soundToPlay.play( volume );
+       soundToPlay.play( volume );
+        
+    }
+    public void play(LucidSound sound, int priority) {
+    	
+    	
+    	long result = 0;
+    	int abortCount = 100;	
+    	do {
+    	  
+
+    	
+	    	 // check if the sound is enabled
+	        if( ! enabled ) return;
+	
+	        // try and get the sound from the cache
+	        Sound soundToPlay = soundCache.get( sound );
+	        if( soundToPlay == null ) {
+	            FileHandle soundFile = Gdx.files.internal( sound.getFileName() );
+	            soundToPlay = Gdx.audio.newSound( soundFile );
+	            soundCache.add( sound, soundToPlay );
+	        }
+	
+	        // play the sound
+	        //Gdx.app.log( TAG, "Playing sound: " + sound.name() );
+	       result = soundToPlay.play( volume );
+       
+       if(result == -1) {
+   		try {
+   			Thread.sleep(2);
+   		} catch (InterruptedException e) {
+   			e.printStackTrace();
+   		}
+   	  }
+   	} while(result == -1 && abortCount-- > 0); 
+    	
     }
     
     /**

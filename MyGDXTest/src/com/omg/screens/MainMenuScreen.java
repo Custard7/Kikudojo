@@ -40,7 +40,7 @@ public class MainMenuScreen implements Screen, TextureProvider {
 	 private Stage stage;
 	 JSActor BASENODE;
 	 
-	 boolean skipIntro = true;
+	 boolean skipIntro = false;
 	 
 
 	 JSActor omgLogo;

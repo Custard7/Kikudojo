@@ -29,6 +29,8 @@ import com.omg.filemanagement.LEDataHandler;
 import com.omg.filemanagement.QRSet.QROptions;
 import com.omg.gui.ABCDDialogue;
 import com.omg.gui.HUD;
+import com.omg.gui.Instructions;
+import com.omg.gui.Instructions.InstructionState;
 import com.omg.gui.ReplayMenu;
 import com.omg.gui.ReplayMenu.MenuState;
 import com.omg.gui.VersusDialogue;
@@ -92,6 +94,7 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	 ABCDDialogue abcdDialogue;
 	 
 	 ReplayMenu replayMenu;
+	 Instructions instructionsMenu;
 	 
 	 ShaderProgram shader;
 	 LEDataHandler leDataHandler;
@@ -106,12 +109,13 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		 leavingVersusCorrect,
 		 leavingVersusIncorrect,
 		 paused,
-		 dead
+		 dead,
+		 instructions
 		 
 		 
 	 }
 	 
-	 GameState gameState = GameState.running;
+	 GameState gameState = GameState.instructions;
 	 
 	 
 	 public GameState getState() {
@@ -255,6 +259,14 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	    	 player.freeze();
 	    	 
 	    	 dropDownReplayMenu();
+	     case instructions:
+	    	 world.freezeWorld();
+	    	 player.freeze();
+	    	 
+	    	 if(instructionsMenu.getState() == InstructionState.away) {
+	    		 setGameState(GameState.running);
+	    	 }
+	    	 break;
 	    	 
 	     default:
 	    	 break;
@@ -402,6 +414,10 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 	  		replayMenu.setPosition(0, 0);
 	  		replayMenu.setState(MenuState.up);
 	  		stage.addActor(replayMenu);
+	  		
+	  		instructionsMenu = new Instructions();
+	  		instructionsMenu.setPosition(0, 0);
+	  		BASENODE.addActor(instructionsMenu);
 
 	  		
 	  		musicManager.play(LucidMusic.GAME_MUSIC);
@@ -439,9 +455,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 		
        leDataHandler = new LEDataHandler();
        leDataHandler.loadQR("P1_6"); //qr_sample
-       for(LucidSound sound : leDataHandler.getSounds()){
-       	soundManager.load(sound);
-       }
+      // for(LucidSound sound : leDataHandler.getSounds()){
+      // 	soundManager.load(sound);
+       //}
        
     soundManager.load(new LucidSound("sfx/correct.ogg"), "Correct");
     soundManager.load(new LucidSound("sfx/footsteps.ogg"), "Footsteps");
@@ -459,7 +475,6 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
     soundManager.load(new LucidSound("sfx/platform_crumble.ogg"), "Crumble");
     soundManager.load(new LucidSound("sfx/splash.ogg"), "Splash");
     soundManager.load(new LucidSound("sfx/player_die.ogg"), "Player Die");
-
 
 
 
@@ -520,6 +535,9 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
    	aManager.loadTexture("data/ui/paused.png", "HUD_Paused");
    	
    	aManager.loadTexture("data/ui/replay_menu/drop_down_box.png", "Replay_Billboard");
+   	aManager.loadTexture("data/ui/instructions/game_instructions.png", "Instructions_Game");
+   	aManager.loadTexture("data/ui/instructions/touch_instructions.png", "Instructions_Touch");
+
 
 
 
@@ -655,7 +673,8 @@ public class GameScreen implements Screen, TextureProvider, Loadable {
 			
 				setGameState(GameState.showingVersus);
 				//soundManager.play(soundManager.QUESTION());
-				soundManager.play(abcdDialogue.getQRBlock().getQuestionSound());
+				soundManager.play(abcdDialogue.getQRBlock().getQuestionSound(), 0);
+			
 				soundManager.setVolume(1.0f);
 				musicManager.setVolume(.20f);
 				

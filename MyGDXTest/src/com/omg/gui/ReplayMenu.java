@@ -152,7 +152,8 @@ public class ReplayMenu extends JSActor {
 		replayButton.setSize(500, 172);
 		this.addActor(replayButton);
 		
-		
+		replayButton.setDisabled(false);
+
 		
 		//Menu Button
 		Skin skinB = new Skin();
@@ -190,6 +191,8 @@ public class ReplayMenu extends JSActor {
 		highscoreText.setScale(2.3f);
 		this.addActor(highscoreText);
 		
+		
+		menuButton.setDisabled(false);
 		
 	}
 	
